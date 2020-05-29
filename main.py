@@ -22,14 +22,16 @@ class MultiNet:
         self.num_layers = num_layers
         self.rewired_fraction = to_rewire
         self.shared_nodes_ratio = shared_nodes_ratio
-        self.shared_nodes = tuple(np.random.randint(0, num_nodes, int(shared_nodes_ratio * num_nodes)))
+        self.shared_nodes = tuple(
+            [int(i) for i in np.random.choice(num_nodes, size=round(shared_nodes_ratio * num_nodes), replace=False)])
+        self.individual_nodes = tuple({i for i in range(self.num_nodes)}.difference(set(self.shared_nodes)))
         self.layers = ()
-
-        sys.setrecursionlimit(10000)
 
         if to_rewire > 1:
             raise ValueError('rewiring probability r must be in the range [0,1]')
         elif to_rewire > 0:
+            sys.setrecursionlimit(10000)
+
             edges_to_rewire = to_rewire * self.num_edges
             edges_to_rewire = int(edges_to_rewire) if ((int(edges_to_rewire) % 2) == 0) else int(edges_to_rewire) + 1
 
@@ -48,11 +50,11 @@ class MultiNet:
                     raise RecursionError('too many tries to rewire links')
 
                 self.layers = self.layers + (new_graph,)
+
+            sys.setrecursionlimit(1000)
         else:
             for i in range(num_layers):
                 self.layers = self.layers + (graph.copy(),)
-
-        sys.setrecursionlimit(1000)
 
     def rewire_links(self, graph, edges_to_rewire):
         rewired = set()
@@ -68,7 +70,6 @@ class MultiNet:
 
     def get_two_new_edges(self, edge_list, exclude):
         edge_list = list(set(edge_list) - exclude)
-        # print(edge_list)
         edge_one, edge_two = np.random.randint(0, len(edge_list), 2)
         edge_one = edge_list[edge_one]
         edge_two = edge_list[edge_two]
@@ -85,37 +86,72 @@ class MultiNet:
 
         return edge_one, edge_two, new_edge_one, new_edge_two
 
+    def compute_av_edge_overlap(self):
+        count = 0.0
+        overlap = 0.0
+        for i in range(self.num_layers - 1):
+            for j in range(i+1, self.num_layers):
+                edge_set_one = set(self.layers[i].get_edgelist())
+                edge_set_two = set(self.layers[j].get_edgelist())
+                count += 1.0
+                overlap += 1.0 * len(edge_set_one.intersection(edge_set_two)) / self.num_edges
+        return overlap / count
+
+
+class MultiNetCoordination(MultiNet):
+
+    def __init__(self, *args, left_prob=0.5):
+        super().__init__(*args)
+
+        for i in range(self.num_layers):
+            for node_idx in self.individual_nodes:
+                self.layers[i].vs(node_idx)['shared'] = False
+                if np.random.random() < left_prob:
+                    self.layers[i].vs(node_idx)['strategy'] = 'left'
+                    self.layers[i].vs(node_idx)['color'] = 'blue'
+                else:
+                    self.layers[i].vs(node_idx)['strategy'] = 'right'
+                    self.layers[i].vs(node_idx)['color'] = 'orange'
+
+        for node_idx in self.shared_nodes:
+            if np.random.random() < left_prob:
+                for i in range(self.num_layers):
+                    self.layers[i].vs(node_idx)['shared'] = True
+                    self.layers[i].vs(node_idx)['strategy'] = 'left'
+                    self.layers[i].vs(node_idx)['color'] = 'blue'
+            else:
+                for i in range(self.num_layers):
+                    self.layers[i].vs(node_idx)['shared'] = True
+                    self.layers[i].vs(node_idx)['strategy'] = 'right'
+                    self.layers[i].vs(node_idx)['color'] = 'orange'
+
 
 def compute_edge_overlap(graph_one, graph_two):
-    edge_list_one = graph_one.get_edgelist()
-    return len(set(edge_list_one).intersection(set(graph_two.get_edgelist()))) / len(edge_list_one)
+    edge_set_one = set(graph_one.get_edgelist())
+    edge_set_two = set(graph_two.get_edgelist())
+    return 1.0 * len(edge_set_one.intersection(set(edge_set_two))) / len(edge_set_one)
 
 
 if __name__ == '__main__':
-    net = MultiNet(50, 20, 3, 1, 0.5)
-    print(net)
-    print(net.layers)
+    net = MultiNetCoordination(10, 4, 6, 1, 0.0)
     layout = ig.Graph.layout(net.layers[0])
-    # ig.plot(net.layers[0], layout=layout)
-    # ig.plot(net.layers[1], layout=layout)
-    # ig.plot(net.layers[2], layout=layout)
-    print(compute_edge_overlap(net.layers[0], net.layers[1]))
-    print(compute_edge_overlap(net.layers[2], net.layers[1]))
+    for i in range(net.num_layers):
+        ig.plot(net.layers[i], layout=layout)
+    print(net.shared_nodes)
+    print(net.individual_nodes)
+    print(net.compute_av_edge_overlap())
     print(net.shared_nodes_ratio)
 
 
 
-# network initialization - random regular lattice
-# allow node overlap - nodes are just indexed, for every node keep the list of groups of layers that are connected
-# e.g [(1,2), (3,4), 5] - layers 1 and 2 are connected and 3 and 4, but 5 is separate from all
-# allow any edge overlap (at first for 2 layers) - start with identical nets and rewire a certain fraction of links
-# allow an arbitrary number of layers in simulations
 
 
 # game played pay-off matrix
-# cooperation game with b><1
+# coordination game game with b><1
 # 1,1   0,-b
 # -b,0  2,2
+b = 1
+pay_off = {'left': {'left': 1, 'right': 0}, 'right': {'left': -b, 'right': 2}}  # pay_off[mine][co-player]
 
 # update dynamics and evalution of the strategy
 # player looks at all neighbors in one of the layers (random one, always one, both at once?)
