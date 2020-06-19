@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
-import csv
-import glob
-import igraph as ig
-import logging as log
-from matplotlib import pyplot as plt
-import numpy as np
-import os
-import time
 import sys
+import random
+import numpy as np
+import igraph as ig
+
+import constants as const
+
+
+###################################
+#      multilayer networks        #
+###################################
 
 
 class MultiNet:
@@ -107,23 +109,23 @@ class MultiNetCoordination(MultiNet):
             for node_idx in self.individual_nodes:
                 self.layers[i].vs(node_idx)['shared'] = False
                 if np.random.random() < left_prob:
-                    self.layers[i].vs(node_idx)['strategy'] = 'left'
-                    self.layers[i].vs(node_idx)['color'] = 'blue'
+                    self.layers[i].vs(node_idx)['strategy'] = const.LEFT
+                    self.layers[i].vs(node_idx)['color'] = const.GREEN
                 else:
-                    self.layers[i].vs(node_idx)['strategy'] = 'right'
-                    self.layers[i].vs(node_idx)['color'] = 'orange'
+                    self.layers[i].vs(node_idx)['strategy'] = const.RIGHT
+                    self.layers[i].vs(node_idx)['color'] = const.GOLD
 
         for node_idx in self.shared_nodes:
             if np.random.random() < left_prob:
                 for i in range(self.num_layers):
                     self.layers[i].vs(node_idx)['shared'] = True
-                    self.layers[i].vs(node_idx)['strategy'] = 'left'
-                    self.layers[i].vs(node_idx)['color'] = 'blue'
+                    self.layers[i].vs(node_idx)['strategy'] = const.LEFT
+                    self.layers[i].vs(node_idx)['color'] = const.GREEN
             else:
                 for i in range(self.num_layers):
                     self.layers[i].vs(node_idx)['shared'] = True
-                    self.layers[i].vs(node_idx)['strategy'] = 'right'
-                    self.layers[i].vs(node_idx)['color'] = 'orange'
+                    self.layers[i].vs(node_idx)['strategy'] = const.RIGHT
+                    self.layers[i].vs(node_idx)['color'] = const.GOLD
 
 
 def compute_edge_overlap(graph_one, graph_two):
@@ -137,23 +139,28 @@ def compute_edge_overlap(graph_one, graph_two):
 ##############################
 
 
-def initialize_random_reg_net(num_nodes, av_degree, left_prob=0.5):
+def initialize_random_reg_net(num_nodes, av_degree):
     graph = ig.Graph.K_Regular(num_nodes, av_degree, directed=False, multiple=False)
-    for node_idx in range(num_nodes):
-        graph.vs(node_idx)['last_payoff'] = 0
-        if np.random.random() < left_prob:
-            graph.vs(node_idx)['strategy'] = 'left'
-            graph.vs(node_idx)['color'] = 'blue'
-        else:
-            graph.vs(node_idx)['strategy'] = 'right'
-            graph.vs(node_idx)['color'] = 'orange'
+
+    graph.vs()['last_payoff'] = 0.5  # average payoff is 0.5
+    graph.vs()['strategy'] = const.LEFT
+    graph.vs()['color'] = const.GREEN
+
+    for node_idx in random.sample(range(num_nodes), int(num_nodes/2)):
+        graph.vs(node_idx)['strategy'] = const.RIGHT
+        graph.vs(node_idx)['color'] = const.GOLD
+
     return graph
+
+
+##############################
+#           tests            #
+##############################
 
 
 if __name__ == '__main__':
     g = initialize_random_reg_net(100, 8)
     ig.plot(g)
-
 
     # net = MultiNetCoordination(10, 4, 6, 1, 0.0)
     # layout = ig.Graph.layout(net.layers[0])
@@ -163,24 +170,6 @@ if __name__ == '__main__':
     # print(net.individual_nodes)
     # print(net.compute_av_edge_overlap())
     # print(net.shared_nodes_ratio)
-
-
-
-
-
-# game played pay-off matrix
-# coordination game game with b><1
-# 1,1   0,-b
-# -b,0  2,2
-b = 1
-pay_off = {'left': {'left': 1, 'right': 0}, 'right': {'left': -b, 'right': 2}}  # pay_off[mine][co-player]
-pay_off_simple = {'left': {'left': 1, 'right': 0}, 'right': {'left': 0, 'right': 1}}  # pay_off[mine][co-player]
-
-# update dynamics and evalution of the strategy
-# player looks at all neighbors in one of the layers (random one, always one, both at once?)
-# and chooses the best strategy, i.e. the highest payoff last round (if the pay-off is bigger than his)
-# synchronous update (?) everyone plays with all the neigs on all layers and then update strategies and then reset gains
-# or one by one?
 
 
 
