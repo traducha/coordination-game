@@ -82,9 +82,8 @@ def update_strategy(_type):
 ###################################
 
 
-def main_loop_async(graph, num_nodes, time_steps, pay_off_dict, pay_off_norm, update_type):
-    update_func = update_strategy(update_type)
-    last_update = 0
+def main_loop_async(graph, num_nodes, time_steps, pay_off_dict, pay_off_norm, update_func):
+    last_update = None
 
     for time_step in range(time_steps):
         active_node = np.random.randint(0, num_nodes)
@@ -111,9 +110,8 @@ def main_loop_async(graph, num_nodes, time_steps, pay_off_dict, pay_off_norm, up
     return last_update
 
 
-def main_loop_synchronous(graph, num_nodes, time_steps, pay_off_dict, pay_off_norm, update_type):
-    update_func = update_strategy(update_type)
-    last_update = 0
+def main_loop_synchronous(graph, num_nodes, time_steps, pay_off_dict, pay_off_norm, update_func, no_update=False):
+    last_update = None
 
     for time_step in range(time_steps):
 
@@ -142,10 +140,67 @@ def main_loop_synchronous(graph, num_nodes, time_steps, pay_off_dict, pay_off_no
                 last_update = time_step
 
         # update the whole network
-        graph.vs()['strategy'] = new_strategies
-        graph.vs()['last_payoff'] = new_payoffs
+        if not no_update:
+            graph.vs()['strategy'] = new_strategies
+            graph.vs()['last_payoff'] = new_payoffs
 
     return last_update
+
+
+####################################
+#           simulations            #
+####################################
+
+
+def get_left_and_active(g, num_nodes):
+    active = 0
+    for edge in g.get_edgelist():
+        if g.vs(edge[0])['strategy'][0] != g.vs(edge[1])['strategy'][0]:
+            active += 1
+    left_num = 0
+    for node_id in range(num_nodes):
+        if g.vs(node_id)['strategy'][0] == const.LEFT:
+            left_num += 1
+    return left_num, active
+
+
+def run_trajectory(num_nodes=None, av_degree=None, loop_length=None, number_of_loops=None, loop_type=None,
+                   payoff_type=None, update_str_type=None, b=None, check_frozen=False):
+    g = initialize_random_reg_net(num_nodes, av_degree)
+    payoff_dict, payoff_norm = payoff_matrix(payoff_type, b=b)
+    update_func = update_strategy(update_str_type)
+    if loop_type == const.ASYNC:
+        main_loop = main_loop_async
+    elif loop_type == const.SYNC:
+        main_loop = main_loop_synchronous
+    else:
+        raise ValueError(f'Unknown loop type: {loop_type}')
+
+    left_num, active = get_left_and_active(g, num_nodes)
+
+    time_steps = [0]
+    active_nums = [2.0 * active / (av_degree * num_nodes)]
+    left_nums = [left_num / num_nodes]
+    convergence_t = 0
+
+    for i in range(number_of_loops):
+        last_update_time = main_loop(g, num_nodes, loop_length, payoff_dict, payoff_norm, update_func)
+        if last_update_time is not None:
+            convergence_t = ((i * loop_length) + last_update_time) / num_nodes
+
+        left_num, active = get_left_and_active(g, num_nodes)
+
+        time_steps.append(((i + 1) * loop_length) / num_nodes)  # MC time steps
+        active_nums.append(2.0 * active / (av_degree * num_nodes))
+        left_nums.append(left_num / num_nodes)
+
+        if check_frozen:
+            updated = main_loop_synchronous(g, num_nodes, 1, payoff_dict, payoff_norm, update_func,
+                                            no_update=True)
+            if updated is None:
+                break
+
+    return convergence_t, time_steps, active_nums, left_nums
 
 
 ##############################
@@ -153,55 +208,56 @@ def main_loop_synchronous(graph, num_nodes, time_steps, pay_off_dict, pay_off_no
 ##############################
 
 
-if __name__ == '__main__':
-    N = 1000
-    k = 10
-    loop_steps = 2
-    g = initialize_random_reg_net(N, k)
-    ll = ig.Graph.layout(g)
-
-    active = 0
-    for edge in g.get_edgelist():
-        if g.vs(edge[0])['strategy'][0] != g.vs(edge[1])['strategy'][0]:
-            active += 1
-    left_num = 0
-    for node_id in range(N):
-        if g.vs(node_id)['strategy'][0] == const.LEFT:
-            left_num += 1
-
-    time_steps = [0]
-    active_nums = [2.0 * active / (k * N)]
-    left_nums = [left_num / N]
-    convergence_t = 0
-
-    for i in range(10):
-        # for node_id in range(N):
-        #     if g.vs(node_id)['strategy'][0] == const.LEFT:
-        #         g.vs(node_id)['color'] = const.GREEN
-        #     else:
-        #         g.vs(node_id)['color'] = const.GOLD
-        # ig.plot(g, layout=ll)
-        payoff_dict, payoff_norm = payoff_matrix(const.COMPLEX, b=1)
-        last_update_time = main_loop_synchronous(g, N, loop_steps, payoff_dict, payoff_norm, const.UNCOND_IMITATION)
-        if last_update_time > 0:
-            convergence_t = (i * loop_steps) + last_update_time
-
-        active = 0
-        for edge in g.get_edgelist():
-            if g.vs(edge[0])['strategy'][0] != g.vs(edge[1])['strategy'][0]:
-                active += 1
-        left_num = 0
-        for node_id in range(N):
-            if g.vs(node_id)['strategy'][0] == const.LEFT:
-                left_num += 1
-
-        time_steps.append((i+1)*loop_steps)
-        active_nums.append(2.0 * active / (k * N))
-        left_nums.append(left_num / N)
-
-    plt.plot(time_steps, left_nums, label='left frac')
-    plt.plot(time_steps, active_nums, label='active edges')
-    plt.axvline(convergence_t)
-    plt.legend()
-    plt.show()
-
+# if __name__ == '__main__':
+#     N = 1000
+#     k = 10
+#     loop_steps = 100
+#     g = initialize_random_reg_net(N, k)
+#     ll = ig.Graph.layout(g)
+#
+#     active = 0
+#     for edge in g.get_edgelist():
+#         if g.vs(edge[0])['strategy'][0] != g.vs(edge[1])['strategy'][0]:
+#             active += 1
+#     left_num = 0
+#     for node_id in range(N):
+#         if g.vs(node_id)['strategy'][0] == const.LEFT:
+#             left_num += 1
+#
+#     time_steps = [0]
+#     active_nums = [2.0 * active / (k * N)]
+#     left_nums = [left_num / N]
+#     convergence_t = 0
+#
+#     payoff_dict, payoff_norm = payoff_matrix(const.COMPLEX, b=1)
+#     update_func = update_strategy(const.UNCOND_IMITATION)
+#     for i in range(100):
+#         # for node_id in range(N):
+#         #     if g.vs(node_id)['strategy'][0] == const.LEFT:
+#         #         g.vs(node_id)['color'] = const.GREEN
+#         #     else:
+#         #         g.vs(node_id)['color'] = const.GOLD
+#         # ig.plot(g, layout=ll)
+#         last_update_time = main_loop_async(g, N, loop_steps, payoff_dict, payoff_norm, update_func)
+#         if last_update_time is not None:
+#             convergence_t = (i * loop_steps) + last_update_time
+#
+#         active = 0
+#         for edge in g.get_edgelist():
+#             if g.vs(edge[0])['strategy'][0] != g.vs(edge[1])['strategy'][0]:
+#                 active += 1
+#         left_num = 0
+#         for node_id in range(N):
+#             if g.vs(node_id)['strategy'][0] == const.LEFT:
+#                 left_num += 1
+#
+#         time_steps.append((i+1)*loop_steps)
+#         active_nums.append(2.0 * active / (k * N))
+#         left_nums.append(left_num / N)
+#
+#     plt.plot(time_steps, left_nums, label='left frac')
+#     plt.plot(time_steps, active_nums, label='active edges')
+#     plt.axvline(convergence_t)
+#     plt.legend()
+#     plt.show()
+#

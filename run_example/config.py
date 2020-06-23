@@ -2,11 +2,13 @@
 import constants as const
 
 config_values = {
-    "network_size": 1000,
-    "average_degree": 8,
-    "payoff_matrix": const.COMPLEX,
+    "num_nodes": 1000,
+    "av_degree": 8,
+    "payoff_type": const.COMPLEX,
     "b": 1,  # necessary for the complex payoff matrix
-    "update_type": const.UNCOND_IMITATION,
+    "update_str_type": const.REPLICATOR,
+    "loop_type": const.ASYNC,
     "loop_length": 100,
-    "loop_type": const.ASYNC
+    "number_of_loops": 1000000,
+    "check_frozen": True,
 }
