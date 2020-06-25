@@ -24,7 +24,7 @@ def payoff_matrix(_type, b=None):
         raise ValueError(f'Unrecognized matrix type: {_type}')
 
 
-def unconditional_imitation(active_payoff, active_strategy, neig_list, pay_off_dict, pay_off_norm):
+def unconditional_imitation(active_payoff, active_strategy, neig_list, pay_off_dict, pay_off_norm, **kwargs):
     # unconditional imitation - copy the most succesful neig if he's better
     max_neig_payoff = -10000
     max_neig_strategy = None
@@ -39,7 +39,7 @@ def unconditional_imitation(active_payoff, active_strategy, neig_list, pay_off_d
         return active_strategy
 
 
-def best_response(active_payoff, active_strategy, neig_list, pay_off_dict, pay_off_norm):
+def best_response(active_payoff, active_strategy, neig_list, pay_off_dict, pay_off_norm, **kwargs):
     # the best response - chose the strategy giving the best pay_off at the current situation
     payoff_left = 0
     payoff_right = 0
@@ -55,14 +55,20 @@ def best_response(active_payoff, active_strategy, neig_list, pay_off_dict, pay_o
         return const.RIGHT
 
 
-def replicator_dynamics(active_payoff, active_strategy, neig_list, pay_off_dict, pay_off_norm):
+def replicator_dynamics(active_payoff, active_strategy, neig_list, pay_off_dict, pay_off_norm, check_frozen=False):
     # replicator dynamics - one player is chosen at random and his strategy is copied with some p
-    neig_id, neig_strategy, neig_payoff = neig_list[np.random.randint(len(neig_list))]
-    probability = (neig_payoff - active_payoff) / (len(neig_list) * pay_off_norm)
+    if not check_frozen:
+        neig_id, neig_strategy, neig_payoff = neig_list[np.random.randint(len(neig_list))]
+        probability = (neig_payoff - active_payoff) / (len(neig_list) * pay_off_norm)
 
-    if probability > 0 and np.random.random() < probability:
-        return neig_strategy
+        if probability > 0 and np.random.random() < probability:
+            return neig_strategy
+        else:
+            return active_strategy
     else:
+        for neig_id, neig_strategy, neig_payoff in neig_list:
+            if neig_payoff > active_payoff and neig_strategy != active_strategy:
+                return neig_strategy
         return active_strategy
 
 
@@ -133,7 +139,8 @@ def main_loop_synchronous(graph, num_nodes, time_steps, pay_off_dict, pay_off_no
             new_payoffs.append(active_payoff)
 
             # compute the new strategy
-            new_strategy = update_func(active_payoff, active_strategy, neig_list, pay_off_dict, pay_off_norm)
+            new_strategy = update_func(active_payoff, active_strategy, neig_list, pay_off_dict, pay_off_norm,
+                                       check_frozen=no_update)
             new_strategies.append(new_strategy)
 
             if new_strategy != active_strategy:

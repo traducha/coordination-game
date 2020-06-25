@@ -9,15 +9,15 @@ LEFT = 'left'  # the left (or upper) one, risk-dominant in the complex matrix
 RIGHT = 'right'  # the right (or lower) one, payoff-dominant in the complex matrix
 
 # update rules
-UNCOND_IMITATION = 'unconditional_imitation'
-REPLICATOR = 'replicator_dynamics'
-BEST_RESPONSE = 'best_response'
+UNCOND_IMITATION = 2
+REPLICATOR = 3
+BEST_RESPONSE = 4
 
 # payoff matrix
-COMPLEX = 'complex'  # complex one with -b
-SIMPLE = 'simple'  # simple one with 1,1 and 0,0
+COMPLEX = 0  # complex one with -b
+SIMPLE = 1  # simple one with 1,1 and 0,0
 
 # loop type
-ASYNC = 'not_synchronous'  # one node at a time
-SYNC = 'synchronous'
+ASYNC = 5  # one node at a time
+SYNC = 6
 
