@@ -14,21 +14,24 @@ from config import config_values
 @run_with_time
 def main(configuration):
     res = {}
-    for b in np.linspace(0, 2, 10):
-        conf = dict(configuration, b=b)
+    for k in range(4, 31):
+        conf = dict(configuration, av_degree=k)
         conv_time, left_nums, active_nums = get_stationary_state_sample(**conf)
-        res[b] = {
+        res[k] = {
             'convergence_time': conv_time,
             'active_density': active_nums,
             'left_fraction': left_nums,
         }
 
-    save_stationary_over_param(configuration, res, 'b')
+    save_stationary_over_param(configuration, res, 'k')
     res, param, conf = read_stationary_over_param(configuration)
     plot_over_param(res, param, conf)
 
 
 if __name__ == '__main__':
-    print('Configuration: ')
-    pprint(config_values)
-    main(config_values)
+    for update_type in [const.UNCOND_IMITATION, const.REPLICATOR, const.BEST_RESPONSE]:
+        config = dict(config_values, update_str_type=update_type)
+        print('Configuration: ')
+        pprint(config)
+        main(config)
+

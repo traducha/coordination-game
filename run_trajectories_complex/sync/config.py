@@ -8,7 +8,8 @@ config_values = {
     "b": None,  # necessary for the complex payoff matrix
     "update_str_type": None,
     "loop_type": const.SYNC,
-    "loop_length": 2,
+    "loop_length": 1,
     "number_of_loops": 1000,
     "check_frozen": True,
+    "sample_size": None,
 }

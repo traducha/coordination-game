@@ -2,11 +2,11 @@
 from pprint import pprint
 import sys
 
+sys.path.insert(1, '/home/tomasz/PycharmProjects/cooperation-game')
+sys.path.insert(1, sys.path[0])
 from tools import run_with_time, save_trajectory, read_trajectory, plot_trajectory
 from main import run_trajectory
 import constants as const
-
-sys.path.insert(1, sys.path[0])
 from config import config_values
 
 

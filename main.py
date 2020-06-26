@@ -171,7 +171,7 @@ def get_left_and_active(g, num_nodes):
 
 
 def run_trajectory(num_nodes=None, av_degree=None, loop_length=None, number_of_loops=None, loop_type=None,
-                   payoff_type=None, update_str_type=None, b=None, check_frozen=False):
+                   payoff_type=None, update_str_type=None, b=None, check_frozen=False, **kwargs):
     print('Running trajectory...')
     g = initialize_random_reg_net(num_nodes, av_degree)
     payoff_dict, payoff_norm = payoff_matrix(payoff_type, b=b)
@@ -179,8 +179,10 @@ def run_trajectory(num_nodes=None, av_degree=None, loop_length=None, number_of_l
 
     if loop_type == const.ASYNC:
         main_loop = main_loop_async
+        time_norm = num_nodes
     elif loop_type == const.SYNC:
         main_loop = main_loop_synchronous
+        time_norm = 1.0
     else:
         raise ValueError(f'Unknown loop type: {loop_type}')
 
@@ -194,11 +196,11 @@ def run_trajectory(num_nodes=None, av_degree=None, loop_length=None, number_of_l
     for i in range(number_of_loops):
         last_update_time = main_loop(g, num_nodes, loop_length, payoff_dict, payoff_norm, update_func)
         if last_update_time is not None:
-            convergence_t = ((i * loop_length) + last_update_time) / num_nodes
+            convergence_t = ((i * loop_length) + last_update_time) / time_norm
 
         left_num, active = get_left_and_active(g, num_nodes)
 
-        time_steps.append(((i + 1) * loop_length) / num_nodes)  # MC time steps
+        time_steps.append(((i + 1) * loop_length) / time_norm)  # MC time steps
         active_nums.append(2.0 * active / (av_degree * num_nodes))
         left_nums.append(left_num / num_nodes)
 
@@ -209,6 +211,52 @@ def run_trajectory(num_nodes=None, av_degree=None, loop_length=None, number_of_l
                 break
 
     return convergence_t, time_steps, active_nums, left_nums
+
+
+def get_stationary_state(num_nodes=None, av_degree=None, loop_length=None, number_of_loops=None, loop_type=None,
+                         payoff_type=None, update_str_type=None, b=None, check_frozen=False, **kwargs):
+    g = initialize_random_reg_net(num_nodes, av_degree)
+    payoff_dict, payoff_norm = payoff_matrix(payoff_type, b=b)
+    update_func = update_strategy(update_str_type)
+
+    if loop_type == const.ASYNC:
+        main_loop = main_loop_async
+        time_norm = num_nodes
+    elif loop_type == const.SYNC:
+        main_loop = main_loop_synchronous
+        time_norm = 1.0
+    else:
+        raise ValueError(f'Unknown loop type: {loop_type}')
+
+    convergence_t = 0
+
+    for i in range(number_of_loops):
+        last_update_time = main_loop(g, num_nodes, loop_length, payoff_dict, payoff_norm, update_func)
+        if last_update_time is not None:
+            convergence_t = ((i * loop_length) + last_update_time) / time_norm
+
+        if check_frozen:
+            updated = main_loop_synchronous(g, num_nodes, 1, payoff_dict, payoff_norm, update_func,
+                                            no_update=True)
+            if updated is None:
+                break
+
+    left_num, active = get_left_and_active(g, num_nodes)
+
+    return convergence_t, left_num / num_nodes, 2.0 * active / (av_degree * num_nodes)
+
+
+def get_stationary_state_sample(sample_size, **kwargs):
+    print('Running stationary sample...')
+    conv_time = []
+    left_nums = []
+    active_nums = []
+    for i in range(sample_size):
+        convergence_t, left_num, active = get_stationary_state(**kwargs)
+        conv_time.append(convergence_t)
+        left_nums.append(left_num)
+        active_nums.append(active)
+    return conv_time, left_nums, active_nums
 
 
 ##############################
