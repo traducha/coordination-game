@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from matplotlib import pyplot as plt
 import igraph as ig
 import numpy as np
 
@@ -173,9 +172,11 @@ def get_left_and_active(g, num_nodes):
 
 def run_trajectory(num_nodes=None, av_degree=None, loop_length=None, number_of_loops=None, loop_type=None,
                    payoff_type=None, update_str_type=None, b=None, check_frozen=False):
+    print('Running trajectory...')
     g = initialize_random_reg_net(num_nodes, av_degree)
     payoff_dict, payoff_norm = payoff_matrix(payoff_type, b=b)
     update_func = update_strategy(update_str_type)
+
     if loop_type == const.ASYNC:
         main_loop = main_loop_async
     elif loop_type == const.SYNC:

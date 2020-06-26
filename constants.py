@@ -3,6 +3,14 @@
 # colors for plotting
 GOLD = '#D4AF37'
 GREEN = '#5aa27c'
+GREEN_BRIGHT = '#32B92D'
+GREEN_DARK = '#249464'
+BLUE = '#0072BB'
+VIOLET = '#332288'
+RED = '#eb0202'
+REDISH = '#FF4C3B'
+YELLOW = '#FFD034'
+ORANGE = '#f79e02'
 
 # strategies
 LEFT = 'left'  # the left (or upper) one, risk-dominant in the complex matrix
