@@ -87,7 +87,7 @@ def update_strategy(_type):
 ###################################
 
 
-def main_loop_async(graph, num_nodes, time_steps, pay_off_dict, pay_off_norm, update_func):
+def main_loop_async_old(graph, num_nodes, time_steps, pay_off_dict, pay_off_norm, update_func):
     last_update = None
 
     for time_step in range(time_steps):
@@ -109,7 +109,47 @@ def main_loop_async(graph, num_nodes, time_steps, pay_off_dict, pay_off_norm, up
         new_strategy = update_func(active_payoff, active_strategy, neig_list, pay_off_dict, pay_off_norm)
         graph.vs(active_node)['strategy'] = new_strategy
 
-        if new_strategy != active_strategy:  # or old_active_payoff != active_payoff:
+        if new_strategy != active_strategy:
+            last_update = time_step
+
+    return last_update
+
+
+def compute_payoff(graph, node_index, pay_off_dict):
+    neighbors = graph.neighbors(node_index)
+    node_strategy = graph.vs(node_index)['strategy'][0]
+    payoff = 0
+
+    # compute the payoff playing with neighbors
+    for neig in neighbors:
+        payoff += pay_off_dict[node_strategy][graph.vs(neig)['strategy'][0]]
+
+    return payoff
+
+
+def main_loop_async(graph, num_nodes, time_steps, pay_off_dict, pay_off_norm, update_func):
+    last_update = None
+
+    for time_step in range(time_steps):
+        active_node = np.random.randint(0, num_nodes)
+        neighbors = graph.neighbors(active_node)
+
+        active_strategy = graph.vs(active_node)['strategy'][0]
+        active_payoff = 0
+        neig_list = []  # [(id, strategy, payoff), ...]
+
+        # compute the payoff playing with neighbors
+        for neig in neighbors:
+            neig_list.append((neig, graph.vs(neig)['strategy'][0], compute_payoff(graph, neig, pay_off_dict)))
+            active_payoff += pay_off_dict[active_strategy][graph.vs(neig)['strategy'][0]]
+
+        graph.vs(active_node)['last_payoff'] = active_payoff
+
+        # update the strategy
+        new_strategy = update_func(active_payoff, active_strategy, neig_list, pay_off_dict, pay_off_norm)
+        graph.vs(active_node)['strategy'] = new_strategy
+
+        if new_strategy != active_strategy:
             last_update = time_step
 
     return last_update
@@ -123,19 +163,27 @@ def main_loop_synchronous(graph, num_nodes, time_steps, pay_off_dict, pay_off_no
         new_payoffs = []
         new_strategies = []
 
+        # payoff loop
         for active_node in range(num_nodes):
             neighbors = graph.neighbors(active_node)
-
             active_strategy = graph.vs(active_node)['strategy'][0]
             active_payoff = 0
-            neig_list = []  # [(id, strategy, payoff), ...]
 
             # compute the payoff playing with neighbors
             for neig in neighbors:
-                neig_list.append((neig, graph.vs(neig)['strategy'][0], graph.vs(neig)['last_payoff'][0]))
                 active_payoff += pay_off_dict[active_strategy][graph.vs(neig)['strategy'][0]]
 
             new_payoffs.append(active_payoff)
+
+        # strategy loop
+        for active_node in range(num_nodes):
+            neighbors = graph.neighbors(active_node)
+            active_strategy = graph.vs(active_node)['strategy'][0]
+            active_payoff = new_payoffs[active_node]
+
+            neig_list = []  # [(id, strategy, payoff), ...]
+            for neig in neighbors:
+                neig_list.append((neig, graph.vs(neig)['strategy'][0], new_payoffs[neig]))
 
             # compute the new strategy
             new_strategy = update_func(active_payoff, active_strategy, neig_list, pay_off_dict, pay_off_norm,

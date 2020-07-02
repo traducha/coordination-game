@@ -3,8 +3,8 @@ import constants as const
 
 config_values = {
     "num_nodes": 1000,
-    "av_degree": None,
-    "payoff_type": const.SIMPLE,
+    "av_degree": 32,
+    "payoff_type": const.COMPLEX,
     "b": None,  # necessary for the complex payoff matrix
     "update_str_type": None,
     "loop_type": const.ASYNC,

@@ -5,7 +5,7 @@ config_values = {
     "num_nodes": 1000,
     "av_degree": None,
     "payoff_type": const.SIMPLE,
-    "b": 1,  # necessary for the complex payoff matrix
+    "b": None,  # necessary for the complex payoff matrix
     "update_str_type": None,
     "loop_type": const.SYNC,
     "loop_length": 10,

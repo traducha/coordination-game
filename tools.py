@@ -93,13 +93,14 @@ def plot_trajectory(res, config, directory='plots'):
     os.makedirs(directory, exist_ok=True)
 
     plt.figure(figsize=(4, 3))
-    plt.plot(res['time_steps'], res['left_fraction'], color=const.REDISH, label=r'$\alpha$ fraction')
+    plt.plot(res['time_steps'], res['left_fraction'], color=const.REDISH, label=r'$\alpha$')
     plt.plot(res['time_steps'], res['active_density'], color=const.GREEN_BRIGHT, label=r'$\rho$')
     plt.axvline(res['convergence_time'], color='black', linestyle='--')
+    plt.ylim([0, 1])
     plt.legend()
     plt.xlabel('MC times steps')
     plt.title(f"Trajectory for N={config['num_nodes']}, k={config['av_degree']}"
-              + f", b={config['b']}" if config['payoff_type'] == const.COMPLEX else '')
+              + (f", b={config['b']}" if config['payoff_type'] == const.COMPLEX else ''))
     plt.tight_layout()
 
     plot_name = f'{directory}/trajectory_{config_into_suffix(config)}.pdf'
@@ -108,38 +109,50 @@ def plot_trajectory(res, config, directory='plots'):
 
 
 def plot_over_param(res, param, config, directory='plots'):
-    # TODO osobno plotting time i reszty, osobno wykres z punktami i osobno z std
     os.makedirs(directory, exist_ok=True)
-    plt.figure(figsize=(4, 3))
+    fig = plt.figure(figsize=(4, 3))
 
     averages = []
     deviations = []
-    for value, key in res.items():
-        averages.append(
-            (value, np.mean(key['convergence_time']), np.mean(key['active_density']), np.mean(key['left_fraction'])))
-        deviations.append(
-            (value, np.std(key['convergence_time']), np.std(key['active_density']), np.std(key['left_fraction'])))
+    for key, value in res.items():
+        averages.append((float(key), np.mean(value['convergence_time']), np.mean(value['active_density']),
+                         np.mean(value['left_fraction'])))
+        deviations.append((float(key), np.std(value['convergence_time']), np.std(value['active_density']),
+                           np.std(value['left_fraction'])))
+
         for i in range(config['sample_size']):
-            # plt.plot(value, key['convergence_time'][i], color=const.BLUE, marker='o', markerfacecolor='none')
-            plt.plot(value, key['active_density'][i], color=const.GREEN_BRIGHT, marker='o', markerfacecolor='none')
-            plt.plot(value, key['left_fraction'][i], color=const.REDISH, marker='o', markerfacecolor='none')
+            # plt.plot(float(key), value['convergence_time'][i], color=const.BLUE, marker='o', markerfacecolor='none')
+            # plt.plot(float(key), value['active_density'][i], color=const.GREEN_BRIGHT, marker='o',
+            #          markerfacecolor='none', alpha=0.2)
+            plt.plot(float(key), value['left_fraction'][i], color=const.REDISH, marker='o', markerfacecolor='none',
+                     alpha=0.2)
 
     averages.sort(key=lambda element: element[0])
     deviations.sort(key=lambda element: element[0])
     averages = list(zip(*averages))
     deviations = list(zip(*deviations))
 
-    plt.plot(averages[0], averages[3], color=const.REDISH, label=r'$\alpha$ fraction')
+    plt.plot(averages[0], averages[3], color=const.REDISH, label=r'$\alpha$')
     plt.plot(averages[0], averages[2], color=const.GREEN_BRIGHT, label=r'$\rho$')
-    # plt.plot(averages[0], averages[1], color=const.BLUE, label=r'$\tau$')
+
+    # plt.errorbar(averages[0], averages[3], yerr=deviations[3], markerfacecolor='none', color=const.REDISH)
+    # plt.errorbar(averages[0], averages[2], yerr=deviations[2], markerfacecolor='none', color=const.GREEN_BRIGHT)
 
     plt.legend()
     plt.xlabel(param)
-    plt.title(f"Stationary state for N={config['num_nodes']}"
+    plt.title(f"Frozen state for N={config['num_nodes']}"
               + (f", k={config['av_degree']}" if config['av_degree'] is not None else '')
               + (f", b={config['b']}" if config['b'] is not None else ''))
-    plt.tight_layout()
 
+    left, bottom, width, height = [0.58, 0.3, 0.2, 0.2]
+    ax2 = fig.add_axes([left, bottom, width, height])
+    ax2.patch.set_alpha(0.4)
+    ax2.plot(averages[0], averages[1], color=const.BLUE, label=r'$\tau$')
+    # ax2.errorbar(averages[0], averages[1], yerr=deviations[1], markerfacecolor='none', color=const.BLUE)
+    ax2.legend(handlelength=0, handletextpad=0, fancybox=True, fontsize=8)
+    ax2.tick_params(axis='both', which='major', labelsize=8)
+
+    plt.tight_layout()
     plot_name = f'{directory}/stationary_over_{param}_{config_into_suffix(config)}.pdf'
     plt.savefig(plot_name)
     plt.close()
@@ -161,6 +174,7 @@ if __name__ == '__main__':
         "loop_length": 100,
         "number_of_loops": 1000000,
         "check_frozen": False,
+        "sample_size": 50,
     }
     print(config_into_suffix(config_values))
 

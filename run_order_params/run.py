@@ -14,7 +14,7 @@ from config import config_values
 @run_with_time
 def main(configuration):
     res = {}
-    for b in np.linspace(0, 2, 10):
+    for b in np.linspace(0, 4, 10):
         conf = dict(configuration, b=b)
         conv_time, left_nums, active_nums = get_stationary_state_sample(**conf)
         res[b] = {
