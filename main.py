@@ -11,7 +11,7 @@ from networks import initialize_random_reg_net
 #######################################
 
 
-def payoff_matrix(_type, b=None):
+def payoff_matrix(_type, b=None, R=None, P=None, T=None, S=None):
     # pay_off[mine][co-player]
     if _type == const.COMPLEX:
         if b is None:
@@ -19,6 +19,11 @@ def payoff_matrix(_type, b=None):
         return {const.LEFT: {const.LEFT: 1, const.RIGHT: 0}, const.RIGHT: {const.LEFT: -b, const.RIGHT: 2}}, 2 + b
     elif _type == const.SIMPLE:
         return {const.LEFT: {const.LEFT: 1, const.RIGHT: 0}, const.RIGHT: {const.LEFT: 0, const.RIGHT: 1}}, 1
+    elif _type == const.GENERIC:
+        if R is None or P is None or T is None or S is None:
+            raise ValueError('The parameters R, P, T, and S must be provided for the generic payoff matrix.')
+        return {const.LEFT: {const.LEFT: R, const.RIGHT: S}, const.RIGHT: {const.LEFT: T, const.RIGHT: P}},\
+               max([R, P, T, S]) - min([R, P, T, S])
     else:
         raise ValueError(f'Unrecognized matrix type: {_type}')
 
@@ -124,7 +129,7 @@ def compute_payoff(graph, node_index, pay_off_dict):
     for neig in neighbors:
         payoff += pay_off_dict[node_strategy][graph.vs(neig)['strategy'][0]]
 
-    return payoff
+    return payoffs
 
 
 def main_loop_async(graph, num_nodes, time_steps, pay_off_dict, pay_off_norm, update_func):
@@ -226,7 +231,7 @@ def run_trajectory(num_nodes=None, av_degree=None, loop_length=None, number_of_l
     update_func = update_strategy(update_str_type)
 
     if loop_type == const.ASYNC:
-        main_loop = main_loop_async
+        main_loop = main_loop_async_old  # TODO
         time_norm = num_nodes
     elif loop_type == const.SYNC:
         main_loop = main_loop_synchronous
@@ -262,13 +267,14 @@ def run_trajectory(num_nodes=None, av_degree=None, loop_length=None, number_of_l
 
 
 def get_stationary_state(num_nodes=None, av_degree=None, loop_length=None, number_of_loops=None, loop_type=None,
-                         payoff_type=None, update_str_type=None, b=None, check_frozen=False, **kwargs):
+                         payoff_type=None, update_str_type=None, b=None, check_frozen=False, R=None, P=None, T=None,
+                         S=None, **kwargs):
     g = initialize_random_reg_net(num_nodes, av_degree)
-    payoff_dict, payoff_norm = payoff_matrix(payoff_type, b=b)
+    payoff_dict, payoff_norm = payoff_matrix(payoff_type, b=b, R=R, P=P, T=T, S=S)
     update_func = update_strategy(update_str_type)
 
     if loop_type == const.ASYNC:
-        main_loop = main_loop_async
+        main_loop = main_loop_async_old  # TODO
         time_norm = num_nodes
     elif loop_type == const.SYNC:
         main_loop = main_loop_synchronous

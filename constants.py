@@ -13,8 +13,8 @@ YELLOW = '#FFD034'
 ORANGE = '#f79e02'
 
 # strategies
-LEFT = 'left'  # the left (or upper) one, risk-dominant in the complex matrix
-RIGHT = 'right'  # the right (or lower) one, payoff-dominant in the complex matrix
+LEFT = 'left'  # the left (or upper, or alpha) one, risk-dominant in the complex matrix
+RIGHT = 'right'  # the right (or lower, or beta) one, payoff-dominant in the complex matrix
 
 # update rules
 UNCOND_IMITATION = 2
@@ -24,6 +24,7 @@ BEST_RESPONSE = 4
 # payoff matrix
 COMPLEX = 0  # complex one with -b
 SIMPLE = 1  # simple one with 1,1 and 0,0
+GENERIC = 1000  # generic payoff matrix with all entries R, P, T, S to define
 
 # loop type
 ASYNC = 5  # one node at a time

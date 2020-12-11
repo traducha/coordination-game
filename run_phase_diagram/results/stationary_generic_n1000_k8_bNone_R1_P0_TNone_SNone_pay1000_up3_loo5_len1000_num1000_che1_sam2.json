@@ -1,0 +1,500 @@
+{
+    "config": {
+        "num_nodes": 1000,
+        "av_degree": 8,
+        "payoff_type": 1000,
+        "b": null,
+        "R": 1,
+        "P": 0,
+        "S": null,
+        "T": null,
+        "update_str_type": 3,
+        "loop_type": 5,
+        "loop_length": 1000,
+        "number_of_loops": 1000,
+        "check_frozen": true,
+        "sample_size": 2
+    },
+    "results": [
+        {
+            "conf": {
+                "num_nodes": 1000,
+                "av_degree": 8,
+                "payoff_type": 1000,
+                "b": null,
+                "R": 1,
+                "P": 0,
+                "S": -3.0,
+                "T": -2.0,
+                "update_str_type": 3,
+                "loop_type": 5,
+                "loop_length": 1000,
+                "number_of_loops": 1000,
+                "check_frozen": true,
+                "sample_size": 2
+            },
+            "convergence_time": [
+                33.934,
+                51.003
+            ],
+            "active_density": [
+                0.0,
+                0.0
+            ],
+            "left_fraction": [
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "conf": {
+                "num_nodes": 1000,
+                "av_degree": 8,
+                "payoff_type": 1000,
+                "b": null,
+                "R": 1,
+                "P": 0,
+                "S": -2.0,
+                "T": -2.0,
+                "update_str_type": 3,
+                "loop_type": 5,
+                "loop_length": 1000,
+                "number_of_loops": 1000,
+                "check_frozen": true,
+                "sample_size": 2
+            },
+            "convergence_time": [
+                14.506,
+                14.524
+            ],
+            "active_density": [
+                0.0,
+                0.0
+            ],
+            "left_fraction": [
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "conf": {
+                "num_nodes": 1000,
+                "av_degree": 8,
+                "payoff_type": 1000,
+                "b": null,
+                "R": 1,
+                "P": 0,
+                "S": -1.0,
+                "T": -2.0,
+                "update_str_type": 3,
+                "loop_type": 5,
+                "loop_length": 1000,
+                "number_of_loops": 1000,
+                "check_frozen": true,
+                "sample_size": 2
+            },
+            "convergence_time": [
+                9.943,
+                10.204
+            ],
+            "active_density": [
+                0.0,
+                0.0
+            ],
+            "left_fraction": [
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "conf": {
+                "num_nodes": 1000,
+                "av_degree": 8,
+                "payoff_type": 1000,
+                "b": null,
+                "R": 1,
+                "P": 0,
+                "S": 0.0,
+                "T": -2.0,
+                "update_str_type": 3,
+                "loop_type": 5,
+                "loop_length": 1000,
+                "number_of_loops": 1000,
+                "check_frozen": true,
+                "sample_size": 2
+            },
+            "convergence_time": [
+                9.485,
+                12.263
+            ],
+            "active_density": [
+                0.0,
+                0.0
+            ],
+            "left_fraction": [
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "conf": {
+                "num_nodes": 1000,
+                "av_degree": 8,
+                "payoff_type": 1000,
+                "b": null,
+                "R": 1,
+                "P": 0,
+                "S": -3.0,
+                "T": -1.0,
+                "update_str_type": 3,
+                "loop_type": 5,
+                "loop_length": 1000,
+                "number_of_loops": 1000,
+                "check_frozen": true,
+                "sample_size": 2
+            },
+            "convergence_time": [
+                18.941,
+                20.01
+            ],
+            "active_density": [
+                0.0,
+                0.0
+            ],
+            "left_fraction": [
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "conf": {
+                "num_nodes": 1000,
+                "av_degree": 8,
+                "payoff_type": 1000,
+                "b": null,
+                "R": 1,
+                "P": 0,
+                "S": -2.0,
+                "T": -1.0,
+                "update_str_type": 3,
+                "loop_type": 5,
+                "loop_length": 1000,
+                "number_of_loops": 1000,
+                "check_frozen": true,
+                "sample_size": 2
+            },
+            "convergence_time": [
+                35.208,
+                33.66
+            ],
+            "active_density": [
+                0.0,
+                0.0
+            ],
+            "left_fraction": [
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "conf": {
+                "num_nodes": 1000,
+                "av_degree": 8,
+                "payoff_type": 1000,
+                "b": null,
+                "R": 1,
+                "P": 0,
+                "S": -1.0,
+                "T": -1.0,
+                "update_str_type": 3,
+                "loop_type": 5,
+                "loop_length": 1000,
+                "number_of_loops": 1000,
+                "check_frozen": true,
+                "sample_size": 2
+            },
+            "convergence_time": [
+                13.183,
+                11.367
+            ],
+            "active_density": [
+                0.0,
+                0.0
+            ],
+            "left_fraction": [
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "conf": {
+                "num_nodes": 1000,
+                "av_degree": 8,
+                "payoff_type": 1000,
+                "b": null,
+                "R": 1,
+                "P": 0,
+                "S": 0.0,
+                "T": -1.0,
+                "update_str_type": 3,
+                "loop_type": 5,
+                "loop_length": 1000,
+                "number_of_loops": 1000,
+                "check_frozen": true,
+                "sample_size": 2
+            },
+            "convergence_time": [
+                8.197,
+                8.43
+            ],
+            "active_density": [
+                0.0,
+                0.0
+            ],
+            "left_fraction": [
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "conf": {
+                "num_nodes": 1000,
+                "av_degree": 8,
+                "payoff_type": 1000,
+                "b": null,
+                "R": 1,
+                "P": 0,
+                "S": -3.0,
+                "T": 0.0,
+                "update_str_type": 3,
+                "loop_type": 5,
+                "loop_length": 1000,
+                "number_of_loops": 1000,
+                "check_frozen": true,
+                "sample_size": 2
+            },
+            "convergence_time": [
+                13.531,
+                12.351
+            ],
+            "active_density": [
+                0.0,
+                0.0
+            ],
+            "left_fraction": [
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "conf": {
+                "num_nodes": 1000,
+                "av_degree": 8,
+                "payoff_type": 1000,
+                "b": null,
+                "R": 1,
+                "P": 0,
+                "S": -2.0,
+                "T": 0.0,
+                "update_str_type": 3,
+                "loop_type": 5,
+                "loop_length": 1000,
+                "number_of_loops": 1000,
+                "check_frozen": true,
+                "sample_size": 2
+            },
+            "convergence_time": [
+                17.988,
+                12.516
+            ],
+            "active_density": [
+                0.0,
+                0.0
+            ],
+            "left_fraction": [
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "conf": {
+                "num_nodes": 1000,
+                "av_degree": 8,
+                "payoff_type": 1000,
+                "b": null,
+                "R": 1,
+                "P": 0,
+                "S": -1.0,
+                "T": 0.0,
+                "update_str_type": 3,
+                "loop_type": 5,
+                "loop_length": 1000,
+                "number_of_loops": 1000,
+                "check_frozen": true,
+                "sample_size": 2
+            },
+            "convergence_time": [
+                58.097,
+                68.107
+            ],
+            "active_density": [
+                0.0,
+                0.0
+            ],
+            "left_fraction": [
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "conf": {
+                "num_nodes": 1000,
+                "av_degree": 8,
+                "payoff_type": 1000,
+                "b": null,
+                "R": 1,
+                "P": 0,
+                "S": 0.0,
+                "T": 0.0,
+                "update_str_type": 3,
+                "loop_type": 5,
+                "loop_length": 1000,
+                "number_of_loops": 1000,
+                "check_frozen": true,
+                "sample_size": 2
+            },
+            "convergence_time": [
+                9.786,
+                9.157
+            ],
+            "active_density": [
+                0.0,
+                0.0
+            ],
+            "left_fraction": [
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "conf": {
+                "num_nodes": 1000,
+                "av_degree": 8,
+                "payoff_type": 1000,
+                "b": null,
+                "R": 1,
+                "P": 0,
+                "S": -3.0,
+                "T": 1.0,
+                "update_str_type": 3,
+                "loop_type": 5,
+                "loop_length": 1000,
+                "number_of_loops": 1000,
+                "check_frozen": true,
+                "sample_size": 2
+            },
+            "convergence_time": [
+                11.181,
+                16.222
+            ],
+            "active_density": [
+                0.0,
+                0.0
+            ],
+            "left_fraction": [
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "conf": {
+                "num_nodes": 1000,
+                "av_degree": 8,
+                "payoff_type": 1000,
+                "b": null,
+                "R": 1,
+                "P": 0,
+                "S": -2.0,
+                "T": 1.0,
+                "update_str_type": 3,
+                "loop_type": 5,
+                "loop_length": 1000,
+                "number_of_loops": 1000,
+                "check_frozen": true,
+                "sample_size": 2
+            },
+            "convergence_time": [
+                12.698,
+                21.601
+            ],
+            "active_density": [
+                0.0,
+                0.0
+            ],
+            "left_fraction": [
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "conf": {
+                "num_nodes": 1000,
+                "av_degree": 8,
+                "payoff_type": 1000,
+                "b": null,
+                "R": 1,
+                "P": 0,
+                "S": -1.0,
+                "T": 1.0,
+                "update_str_type": 3,
+                "loop_type": 5,
+                "loop_length": 1000,
+                "number_of_loops": 1000,
+                "check_frozen": true,
+                "sample_size": 2
+            },
+            "convergence_time": [
+                18.794,
+                20.345
+            ],
+            "active_density": [
+                0.0,
+                0.0
+            ],
+            "left_fraction": [
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "conf": {
+                "num_nodes": 1000,
+                "av_degree": 8,
+                "payoff_type": 1000,
+                "b": null,
+                "R": 1,
+                "P": 0,
+                "S": 0.0,
+                "T": 1.0,
+                "update_str_type": 3,
+                "loop_type": 5,
+                "loop_length": 1000,
+                "number_of_loops": 1000,
+                "check_frozen": true,
+                "sample_size": 2
+            },
+            "convergence_time": [
+                999.86,
+                999.96
+            ],
+            "active_density": [
+                0.232,
+                0.238
+            ],
+            "left_fraction": [
+                0.83,
+                0.828
+            ]
+        }
+    ]
+}
