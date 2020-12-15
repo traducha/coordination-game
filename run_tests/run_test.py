@@ -32,7 +32,7 @@ def main(configuration):
 
 if __name__ == '__main__':
     for update_type in [const.REPLICATOR]:
-        config = dict(config_values, update_str_type=update_type, sample_size=2, number_of_loops=1000, loop_length=1000, b=2)
+        config = dict(config_values, update_str_type=update_type, sample_size=2, number_of_loops=1000, loop_length=1000)
         print('Configuration: ')
         pprint(config)
         main(config)
@@ -44,5 +44,5 @@ if __name__ == '__main__':
 
 # 23 min with 1000 loops (1loop 1000) old algorithm (b=2 to distinguish)
 
-# check the time with old algorithm and parallel in nurreduna (and synch algorithm?)
-
+# 13 min with 1000 loops (1loop 1000) parallel in nurreduna
+# 4 min with 1000 loops (1loop 1000) parallel in nurreduna and old algorithm

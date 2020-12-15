@@ -129,7 +129,7 @@ def compute_payoff(graph, node_index, pay_off_dict):
     for neig in neighbors:
         payoff += pay_off_dict[node_strategy][graph.vs(neig)['strategy'][0]]
 
-    return payoffs
+    return payoff
 
 
 def main_loop_async(graph, num_nodes, time_steps, pay_off_dict, pay_off_norm, update_func):
@@ -300,7 +300,7 @@ def get_stationary_state(num_nodes=None, av_degree=None, loop_length=None, numbe
     return convergence_t, left_num / num_nodes, 2.0 * active / (av_degree * num_nodes)
 
 
-def get_stationary_state_sample(sample_size, **kwargs):
+def get_stationary_state_sample(sample_size=None, **kwargs):
     print('Running stationary sample...')
     conv_time = []
     left_nums = []
