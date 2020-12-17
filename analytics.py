@@ -18,7 +18,7 @@ def system(x, d_t, config):
 def find_steady(config=None):
     d_x = 1.0
     d_t = 0.01
-    x = 0.5
+    x = 2.0/3.0
     i = 0
     while np.abs(d_x) > 1e-06:
         d_x = system(x, d_t, config=config)
@@ -41,16 +41,20 @@ def plot_repicator():
             res_in.append(find_steady(config=conf))
         res.append(res_in)
 
+    fig = plt.figure(figsize=(4, 3.5))
     im = plt.imshow(res, cmap='jet', origin='lower', extent=[-1, 1, 0, 2], interpolation='none')
-    norm = mpl.colors.Normalize(vmin=0, vmax=1)
-    cbar = plt.colorbar(im, norm=norm)
-    # cbar.ax.tick_params(labelsize=9)
+    cbar = fig.colorbar(im, fraction=0.0467, pad=0.04)
+    cbar.ax.tick_params()
+    cbar.set_clim(0, 1)
 
+    plt.title('Replicator equation')
     plt.axvline(0, linestyle='--')
     plt.axhline(1, linestyle='--')
 
     plt.xlabel('S')
     plt.ylabel('T')
+    plt.tight_layout()
+    plt.savefig('repl_eq23.pdf')
     plt.show()
 
 
