@@ -12,6 +12,7 @@ from networks import initialize_random_reg_net
 
 
 def payoff_matrix(_type, b=None, R=None, P=None, T=None, S=None):
+    # TODO use the same from tools
     # pay_off[mine][co-player]
     if _type == const.COMPLEX:
         if b is None:

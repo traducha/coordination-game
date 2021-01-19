@@ -5,6 +5,7 @@ import numpy as np
 import igraph as ig
 
 import constants as const
+from tools import run_with_time, payoff_matrix
 
 
 ###################################
@@ -16,8 +17,11 @@ class MultiNet:
 
     max_rewiring_tries = 20
 
-    def __init__(self, num_nodes, av_degree, num_layers, to_rewire, shared_nodes_ratio):
-        graph = ig.Graph.K_Regular(num_nodes, av_degree, directed=False, multiple=False)
+    def initialize_single_layer(self):
+        return ig.Graph.K_Regular(self.num_nodes, self.av_degree, directed=False, multiple=False)
+
+    def __init__(self, num_nodes=None, av_degree=None, num_layers=None, to_rewire=None, shared_nodes_ratio=None,
+                 rewire_first_layer=True):
         self.num_nodes = num_nodes
         self.av_degree = av_degree
         self.num_edges = int(num_nodes * av_degree / 2)
@@ -29,15 +33,24 @@ class MultiNet:
         self.individual_nodes = tuple({i for i in range(self.num_nodes)}.difference(set(self.shared_nodes)))
         self.layers = ()
 
-        if to_rewire > 1:
-            raise ValueError('rewiring probability r must be in the range [0,1]')
-        elif to_rewire > 0:
-            sys.setrecursionlimit(10000)
+        if to_rewire == 0:
+            graph = self.initialize_single_layer()
+            self.layers = tuple([graph.copy() for _ in range(num_layers)])
+        elif to_rewire == 1:
+            self.layers = tuple([self.initialize_single_layer() for _ in range(num_layers)])
+        elif 0 < to_rewire < 1:
 
             edges_to_rewire = to_rewire * self.num_edges
             edges_to_rewire = int(edges_to_rewire) if ((int(edges_to_rewire) % 2) == 0) else int(edges_to_rewire) + 1
 
+            graph = self.initialize_single_layer()
+
             for i in range(num_layers):
+
+                if i == 0 and not rewire_first_layer:
+                    self.layers = self.layers + (graph,)
+                    continue
+
                 new_graph = graph.copy()
                 done = False
                 for e in range(self.max_rewiring_tries):
@@ -53,38 +66,43 @@ class MultiNet:
 
                 self.layers = self.layers + (new_graph,)
 
-            sys.setrecursionlimit(1000)
         else:
-            for i in range(num_layers):
-                self.layers = self.layers + (graph.copy(),)
+            raise ValueError('rewiring probability r must be in the range [0,1]')
 
     def rewire_links(self, graph, edges_to_rewire):
         rewired = set()
+        historical_edges = set(graph.get_edgelist())
+
         for j in range(int(edges_to_rewire / 2)):
             edge_list = graph.get_edgelist()
-            edge_one, edge_two, new_edge_one, new_edge_two = self.get_two_new_edges(edge_list, rewired)
+            edge_one, edge_two, new_edge_one, new_edge_two = self.get_two_new_edges(edge_list, rewired,
+                                                                                    historical_edges)
 
             graph.delete_edges([edge_one, edge_two])
             graph.add_edges([new_edge_one, new_edge_two])
 
             rewired = rewired.union({new_edge_one, new_edge_two})
+            historical_edges = historical_edges.union({new_edge_one, new_edge_two})
         return graph
 
-    def get_two_new_edges(self, edge_list, exclude):
-        edge_list = list(set(edge_list) - exclude)
-        edge_one, edge_two = np.random.randint(0, len(edge_list), 2)
-        edge_one = edge_list[edge_one]
-        edge_two = edge_list[edge_two]
+    def get_two_new_edges(self, full_edge_list, exclude, historical_edges):
+        not_rewired_edge_list = list(set(full_edge_list) - exclude)
+        edge_one, edge_two = random.sample(range(len(not_rewired_edge_list)), 2)
+        edge_one = not_rewired_edge_list[edge_one]
+        edge_two = not_rewired_edge_list[edge_two]
+
+        if len(set(edge_one).union(set(edge_two))) != 4:  # the two edges can't share a node
+            return self.get_two_new_edges(full_edge_list, exclude, historical_edges)
 
         new_edge_one = (min(edge_one[0], edge_two[0]), max(edge_one[0], edge_two[0]))
         new_edge_two = (min(edge_one[1], edge_two[1]), max(edge_one[1], edge_two[1]))
-        if new_edge_one in edge_list or new_edge_two in edge_list or new_edge_one[0] == new_edge_one[1] or \
-                        new_edge_two[0] == new_edge_two[1] or new_edge_one in exclude or new_edge_two in exclude:
+
+        if new_edge_one in historical_edges or new_edge_two in historical_edges:
             new_edge_one = (min(edge_one[0], edge_two[1]), max(edge_one[0], edge_two[1]))
             new_edge_two = (min(edge_one[1], edge_two[0]), max(edge_one[1], edge_two[0]))
-        if new_edge_one in edge_list or new_edge_two in edge_list or new_edge_one[0] == new_edge_one[1] or \
-                        new_edge_two[0] == new_edge_two[1] or new_edge_one in exclude or new_edge_two in exclude:
-            return self.get_two_new_edges(edge_list, exclude)
+
+        if new_edge_one in historical_edges or new_edge_two in historical_edges:
+            return self.get_two_new_edges(full_edge_list, exclude, historical_edges)
 
         return edge_one, edge_two, new_edge_one, new_edge_two
 
@@ -99,13 +117,37 @@ class MultiNet:
                 overlap += 1.0 * len(edge_set_one.intersection(edge_set_two)) / self.num_edges
         return overlap / count
 
+    def compute_edge_overlap(self, layer_one, layer_two):
+        edge_set_one = set(self.layers[layer_one].get_edgelist())
+        edge_set_two = set(self.layers[layer_two].get_edgelist())
+        return 1.0 * len(edge_set_one.intersection(set(edge_set_two))) / len(edge_set_one)
+
 
 class MultiNetCoordination(MultiNet):
 
-    def __init__(self, *args, left_prob=0.5):
-        super().__init__(*args)
+    def __init__(self, layers_config=None, payoff_type=None, left_prob=0.5, **kwargs):
+        super().__init__(**kwargs)
+        self.payoff_dicts = ()
+        self.payoff_norms = ()
+
+        if len(layers_config) != len(self.layers):
+            raise ValueError(f"layers_config (len={len(layers_config)}) must contain a configuration"
+                             f"for each layer (layers={len(self.layers)})!")
 
         for i in range(self.num_layers):
+            self.layers[i].vs()['last_payoff'] = 0.5
+
+            conf = layers_config[i]
+            payoff_dict, payoff_norm = payoff_matrix(payoff_type, b=conf['b'], R=conf['R'], P=conf['P'], T=conf['T'],
+                                                     S=conf['S'])
+            self.payoff_dicts = self.payoff_dicts + (payoff_dict,)
+            self.payoff_norms = self.payoff_norms + (payoff_norm,)
+
+            self.layers[i]['index_number'] = i
+            self.layers[i]['payoff_dict'] = payoff_dict
+            self.layers[i]['payoff_norm'] = payoff_norm
+            self.layers[i]['layer_config'] = conf
+
             for node_idx in self.individual_nodes:
                 self.layers[i].vs(node_idx)['shared'] = False
                 if np.random.random() < left_prob:
@@ -126,12 +168,6 @@ class MultiNetCoordination(MultiNet):
                     self.layers[i].vs(node_idx)['shared'] = True
                     self.layers[i].vs(node_idx)['strategy'] = const.RIGHT
                     self.layers[i].vs(node_idx)['color'] = const.GOLD
-
-
-def compute_edge_overlap(graph_one, graph_two):
-    edge_set_one = set(graph_one.get_edgelist())
-    edge_set_two = set(graph_two.get_edgelist())
-    return 1.0 * len(edge_set_one.intersection(set(edge_set_two))) / len(edge_set_one)
 
 
 ##############################
@@ -158,18 +194,26 @@ def initialize_random_reg_net(num_nodes, av_degree):
 ##############################
 
 
-if __name__ == '__main__':
-    g = initialize_random_reg_net(100, 8)
-    ig.plot(g)
+@run_with_time
+def main():
+    # g = initialize_random_reg_net(100, 8)
+    # ig.plot(g)
 
-    # net = MultiNetCoordination(10, 4, 6, 1, 0.0)
-    # layout = ig.Graph.layout(net.layers[0])
+    layers_config = [{"b": None, "R": 1, "P": 0, "S": 1, "T": 2}, {"b": None, "R": 1, "P": 0, "S": 3, "T": 4}]
+    net = MultiNetCoordination(num_nodes=1000, av_degree=8, num_layers=2, to_rewire=0.5, shared_nodes_ratio=0.5,
+                               rewire_first_layer=False, payoff_type=const.GENERIC, layers_config=layers_config)
+    layout = ig.Graph.layout(net.layers[0])
     # for i in range(net.num_layers):
     #     ig.plot(net.layers[i], layout=layout)
-    # print(net.shared_nodes)
-    # print(net.individual_nodes)
-    # print(net.compute_av_edge_overlap())
-    # print(net.shared_nodes_ratio)
+    # print(len(net.shared_nodes))
+    # print(len(net.individual_nodes))
+    print(net.compute_av_edge_overlap())
+    print(net.compute_edge_overlap(0, 1))
+    print(net.layers[1]['index_number'])
+
+
+if __name__ == '__main__':
+    main()
 
 
 

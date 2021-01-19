@@ -16,4 +16,15 @@ config_values = {
     "number_of_loops": 1000,
     "check_frozen": True,
     "sample_size": 100,
+    "multilayer":
+        {
+            "num_layers": 2,
+            "to_rewire": 0.5,
+            "rewire_first_layer": False,
+            "shared_nodes_ratio": 0.5,
+            "layers_config": [
+                {"b": None, "R": 1, "P": 0, "S": None, "T": None},
+                {"b": None, "R": 1, "P": 0, "S": None, "T": None},
+            ],
+        },
 }

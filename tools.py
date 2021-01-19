@@ -40,6 +40,23 @@ def config_into_suffix(conf):
     return f'n{n}_k{k}_b{b}_R{R}_P{P}_T{T}_S{S}_pay{pay}_up{up}_loo{loo}_len{le}_num{num}_che{che}_sam{sam}'
 
 
+def payoff_matrix(_type, b=None, R=None, P=None, T=None, S=None):
+    # pay_off[mine][co-player]
+    if _type == const.COMPLEX:
+        if b is None:
+            raise ValueError('The parameter b must be provided for the complex payoff matrix.')
+        return {const.LEFT: {const.LEFT: 1, const.RIGHT: 0}, const.RIGHT: {const.LEFT: -b, const.RIGHT: 2}}, 2 + b
+    elif _type == const.SIMPLE:
+        return {const.LEFT: {const.LEFT: 1, const.RIGHT: 0}, const.RIGHT: {const.LEFT: 0, const.RIGHT: 1}}, 1
+    elif _type == const.GENERIC:
+        if R is None or P is None or T is None or S is None:
+            raise ValueError('The parameters R, P, T, and S must be provided for the generic payoff matrix.')
+        return {const.LEFT: {const.LEFT: R, const.RIGHT: S}, const.RIGHT: {const.LEFT: T, const.RIGHT: P}},\
+               max([R, P, T, S]) - min([R, P, T, S])
+    else:
+        raise ValueError(f'Unrecognized matrix type: {_type}')
+
+
 #########################################
 #           reading, writing            #
 #########################################
