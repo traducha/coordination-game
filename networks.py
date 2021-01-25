@@ -106,6 +106,16 @@ class MultiNet:
 
         return edge_one, edge_two, new_edge_one, new_edge_two
 
+    def get_layer(self, index):
+        return self.layers[index]
+
+    def update_node(self, node_index, layer_index, trait_name=None, trait_value=None):
+        if node_index in self.shared_nodes:
+            for g in self.layers:
+                g.vs(node_index)[trait_name] = trait_value
+        else:
+            self.layers[layer_index].vs(node_index)[trait_name] = trait_value
+
     def compute_av_edge_overlap(self):
         count = 0.0
         overlap = 0.0
