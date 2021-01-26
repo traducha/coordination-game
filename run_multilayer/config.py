@@ -12,16 +12,16 @@ config_values = {
     "T": None,
     "update_str_type": const.REPLICATOR,
     "loop_type": const.ASYNC,
-    "loop_length": 20000,
+    "loop_length": 5000,
     "number_of_loops": 100,
     "check_frozen": True,
     "sample_size": 100,
     "multilayer":
         {
             "num_layers": 2,
-            "to_rewire": 0.5,
+            "to_rewire": 0,
             "rewire_first_layer": False,
-            "shared_nodes_ratio": 0.5,
+            "shared_nodes_ratio": 0.01,
             "layers_config": [
                 {"b": None, "R": 1, "P": 0, "S": -1, "T": 1},
                 {"b": None, "R": 1, "P": 0, "S": 0, "T": 0},

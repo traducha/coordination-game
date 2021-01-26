@@ -5,8 +5,7 @@ import numpy as np
 from datetime import datetime
 
 import constants as const
-from networks import initialize_random_reg_net, MultiNetCoordination
-from tools import payoff_matrix
+from networks_new import initialize_random_reg_net, MultiNetCoordination
 
 
 #######################################
@@ -78,7 +77,7 @@ def update_strategy(_type):
 ###################################
 
 
-def main_loop_async(graph, num_nodes, time_steps, pay_off_dict, pay_off_norm, update_func, **kwargs):
+def main_loop_async(graph, num_nodes, time_steps, update_func):
     last_update = None
 
     for time_step in range(time_steps):
@@ -92,12 +91,12 @@ def main_loop_async(graph, num_nodes, time_steps, pay_off_dict, pay_off_norm, up
         # compute the payoff playing with neighbors
         for neig in neighbors:
             neig_list.append((neig, graph.vs(neig)['strategy'][0], graph.vs(neig)['last_payoff'][0]))
-            active_payoff += pay_off_dict[active_strategy][graph.vs(neig)['strategy'][0]]
+            active_payoff += graph['payoff_dict'][active_strategy][graph.vs(neig)['strategy'][0]]
 
         graph.vs(active_node)['last_payoff'] = active_payoff
 
         # update the strategy
-        new_strategy = update_func(active_payoff, active_strategy, neig_list, pay_off_dict, pay_off_norm)
+        new_strategy = update_func(active_payoff, active_strategy, neig_list, graph['payoff_dict'], graph['payoff_norm'])
         graph.vs(active_node)['strategy'] = new_strategy
 
         if new_strategy != active_strategy:
@@ -106,19 +105,19 @@ def main_loop_async(graph, num_nodes, time_steps, pay_off_dict, pay_off_norm, up
     return last_update
 
 
-def compute_payoff(graph, node_index, pay_off_dict):
+def compute_payoff(graph, node_index, payoff_dict):
     neighbors = graph.neighbors(node_index)
     node_strategy = graph.vs(node_index)['strategy'][0]
     payoff = 0
 
     # compute the payoff playing with neighbors
     for neig in neighbors:
-        payoff += pay_off_dict[node_strategy][graph.vs(neig)['strategy'][0]]
+        payoff += payoff_dict[node_strategy][graph.vs(neig)['strategy'][0]]
 
     return payoff
 
 
-def main_loop_async_update_neigs(graph, num_nodes, time_steps, pay_off_dict, pay_off_norm, update_func, **kwargs):
+def main_loop_async_update_neigs(graph, num_nodes, time_steps, update_func):
     last_update = None
 
     for time_step in range(time_steps):
@@ -131,13 +130,13 @@ def main_loop_async_update_neigs(graph, num_nodes, time_steps, pay_off_dict, pay
 
         # compute the payoff playing with neighbors
         for neig in neighbors:
-            neig_list.append((neig, graph.vs(neig)['strategy'][0], compute_payoff(graph, neig, pay_off_dict)))
-            active_payoff += pay_off_dict[active_strategy][graph.vs(neig)['strategy'][0]]
+            neig_list.append((neig, graph.vs(neig)['strategy'][0], compute_payoff(graph, neig, graph['payoff_dict'])))
+            active_payoff += graph['payoff_dict'][active_strategy][graph.vs(neig)['strategy'][0]]
 
         graph.vs(active_node)['last_payoff'] = active_payoff
 
         # update the strategy
-        new_strategy = update_func(active_payoff, active_strategy, neig_list, pay_off_dict, pay_off_norm)
+        new_strategy = update_func(active_payoff, active_strategy, neig_list, graph['payoff_dict'], graph['payoff_norm'])
         graph.vs(active_node)['strategy'] = new_strategy
 
         if new_strategy != active_strategy:
@@ -146,8 +145,7 @@ def main_loop_async_update_neigs(graph, num_nodes, time_steps, pay_off_dict, pay
     return last_update
 
 
-def main_loop_synchronous(graph, num_nodes, time_steps, pay_off_dict, pay_off_norm, update_func, no_update=False,
-                          **kwargs):
+def main_loop_synchronous(graph, num_nodes, time_steps, update_func, no_update=False):
     last_update = None
 
     for time_step in range(time_steps):
@@ -163,7 +161,7 @@ def main_loop_synchronous(graph, num_nodes, time_steps, pay_off_dict, pay_off_no
 
             # compute the payoff playing with neighbors
             for neig in neighbors:
-                active_payoff += pay_off_dict[active_strategy][graph.vs(neig)['strategy'][0]]
+                active_payoff += graph['payoff_dict'][active_strategy][graph.vs(neig)['strategy'][0]]
 
             new_payoffs.append(active_payoff)
 
@@ -178,8 +176,8 @@ def main_loop_synchronous(graph, num_nodes, time_steps, pay_off_dict, pay_off_no
                 neig_list.append((neig, graph.vs(neig)['strategy'][0], new_payoffs[neig]))
 
             # compute the new strategy
-            new_strategy = update_func(active_payoff, active_strategy, neig_list, pay_off_dict, pay_off_norm,
-                                       check_frozen=no_update)
+            new_strategy = update_func(active_payoff, active_strategy, neig_list, graph['payoff_dict'],
+                                       graph['payoff_norm'], check_frozen=no_update)
             new_strategies.append(new_strategy)
 
             if new_strategy != active_strategy:
@@ -193,12 +191,12 @@ def main_loop_synchronous(graph, num_nodes, time_steps, pay_off_dict, pay_off_no
     return last_update
 
 
-def main_loop_async_multi(network, num_nodes, time_steps, update_func, **kwargs):
+def main_loop_async_multi(network, num_nodes, time_steps, update_func):
     last_update = None
 
     for time_step in range(time_steps):
         layer_index = np.random.randint(0, network.num_layers)
-        graph = network.leyers[layer_index]
+        graph = network.layers[layer_index]
 
         active_node = np.random.randint(0, num_nodes)
         neighbors = graph.neighbors(active_node)
@@ -216,7 +214,8 @@ def main_loop_async_multi(network, num_nodes, time_steps, update_func, **kwargs)
         new_strategy = update_func(active_payoff, active_strategy, neig_list, graph['payoff_dict'], graph['payoff_norm'])
 
         network.update_node(active_node, layer_index, trait_name='strategy', trait_value=new_strategy)
-        network.update_node(active_node, layer_index, trait_name='last_payoff', trait_value=active_payoff)
+        # network.update_node(active_node, layer_index, trait_name='last_payoff', trait_value=active_payoff)
+        graph.vs(active_node)['last_payoff'] = active_payoff  # TODO
 
         if new_strategy != active_strategy:
             last_update = time_step
@@ -253,12 +252,28 @@ def get_left_and_active(net, num_nodes, multi=False):
     return (left_num_res, active_res) if len(layers) > 1 else (left_num_res[0], active_res[0])
 
 
-def run_trajectory(num_nodes=None, av_degree=None, loop_length=None, number_of_loops=None, loop_type=None,
-                   payoff_type=None, update_str_type=None, b=None, check_frozen=False, multi=False, multilayer=None,
-                   **kwargs):
-    print(f'{datetime.now().strftime("%d/%m/%Y %H:%M:%S")} Running trajectory...')
+def get_loop_function(loop_type, multi, num_nodes):
+    if loop_type == const.ASYNC:
+        if multi:
+            main_loop = main_loop_async_multi
+        else:
+            main_loop = main_loop_async
+        time_norm = num_nodes
+    elif loop_type == const.SYNC:
+        if multi:
+            raise NotImplementedError('Synchronous update is not implemented for multilayer networks.')
+        main_loop = main_loop_synchronous
+        time_norm = 1.0
+    else:
+        raise ValueError(f'Unknown loop type: {loop_type}')
 
-    update_func = update_strategy(update_str_type)
+    return main_loop, time_norm
+
+
+def run_trajectory(num_nodes=None, av_degree=None, loop_length=None, number_of_loops=None, loop_type=None,
+                   payoff_type=None, update_str_type=None, b=None, R=None, P=None, T=None, S=None, check_frozen=False,
+                   multi=False, multilayer=None, **kwargs):
+    print(f'{datetime.now().strftime("%d/%m/%Y %H:%M:%S")} Running trajectory...')
 
     if multi:
         if multilayer is None:
@@ -267,18 +282,12 @@ def run_trajectory(num_nodes=None, av_degree=None, loop_length=None, number_of_l
                                    to_rewire=multilayer['to_rewire'], layers_config=multilayer['layers_config'],
                                    shared_nodes_ratio=multilayer['shared_nodes_ratio'], payoff_type=payoff_type,
                                    rewire_first_layer=multilayer['rewire_first_layer'])
+        print(f'{datetime.now().strftime("%d/%m/%Y %H:%M:%S")} Rewired edges = {net.rewired_fraction}, '
+              f'edge overlap = {net.compute_av_edge_overlap()}')
+        print(f'{datetime.now().strftime("%d/%m/%Y %H:%M:%S")} Overlapping nodes = {len(net.shared_nodes)} '
+              f'(of {net.num_nodes})')
     else:
-        net = initialize_random_reg_net(num_nodes, av_degree)
-        payoff_dict, payoff_norm = payoff_matrix(payoff_type, b=b)
-
-    if loop_type == const.ASYNC:  # TODO different functions for multi and not multi
-        main_loop = main_loop_async
-        time_norm = num_nodes
-    elif loop_type == const.SYNC:
-        main_loop = main_loop_synchronous
-        time_norm = 1.0
-    else:
-        raise ValueError(f'Unknown loop type: {loop_type}')
+        net = initialize_random_reg_net(num_nodes, av_degree, payoff_type=payoff_type, b=b, R=R, P=P, T=T, S=S)
 
     left_num, active = get_left_and_active(net, num_nodes, multi=multi)
 
@@ -291,8 +300,11 @@ def run_trajectory(num_nodes=None, av_degree=None, loop_length=None, number_of_l
         active_nums = [2.0 * active / (av_degree * num_nodes)]
         left_nums = [left_num / num_nodes]
 
+    main_loop, time_norm = get_loop_function(loop_type, multi, num_nodes)
+    update_func = update_strategy(update_str_type)
+
     for i in range(number_of_loops):
-        last_update_time = main_loop(net, num_nodes, loop_length, payoff_dict, payoff_norm, update_func)
+        last_update_time = main_loop(net, num_nodes, loop_length, update_func)
         if last_update_time is not None:
             convergence_t = ((i * loop_length) + last_update_time) / time_norm
 
@@ -306,9 +318,13 @@ def run_trajectory(num_nodes=None, av_degree=None, loop_length=None, number_of_l
             active_nums.append(2.0 * active / (av_degree * num_nodes))
             left_nums.append(left_num / num_nodes)
 
-        if check_frozen:  # TODO check each layer separetely for being frozen?
-            updated = main_loop_synchronous(g, num_nodes, 1, payoff_dict, payoff_norm, update_func,
-                                            no_update=True)
+        if check_frozen:
+            if multi:
+                updated = None
+                for g in net.layers:
+                    updated = updated or main_loop_synchronous(g, num_nodes, 1, update_func, no_update=True)
+            else:
+                updated = main_loop_synchronous(net, num_nodes, 1, update_func, no_update=True)
             if updated is None:
                 break
 
@@ -317,9 +333,8 @@ def run_trajectory(num_nodes=None, av_degree=None, loop_length=None, number_of_l
 
 def get_stationary_state(num_nodes=None, av_degree=None, loop_length=None, number_of_loops=None, loop_type=None,
                          payoff_type=None, update_str_type=None, b=None, check_frozen=False, R=None, P=None, T=None,
-                         S=None, **kwargs):
-    g = initialize_random_reg_net(num_nodes, av_degree)
-    payoff_dict, payoff_norm = payoff_matrix(payoff_type, b=b, R=R, P=P, T=T, S=S)
+                         S=None, multi=False, multilayer=None, **kwargs):
+    g = initialize_random_reg_net(num_nodes, av_degree, payoff_type=payoff_type, b=b, R=R, P=P, T=T, S=S)
     update_func = update_strategy(update_str_type)
 
     if loop_type == const.ASYNC:
@@ -334,13 +349,12 @@ def get_stationary_state(num_nodes=None, av_degree=None, loop_length=None, numbe
     convergence_t = 0
 
     for i in range(number_of_loops):
-        last_update_time = main_loop(g, num_nodes, loop_length, payoff_dict, payoff_norm, update_func)
+        last_update_time = main_loop(g, num_nodes, loop_length, update_func)
         if last_update_time is not None:
             convergence_t = ((i * loop_length) + last_update_time) / time_norm
 
         if check_frozen:
-            updated = main_loop_synchronous(g, num_nodes, 1, payoff_dict, payoff_norm, update_func,
-                                            no_update=True)
+            updated = main_loop_synchronous(g, num_nodes, 1, update_func, no_update=True)
             if updated is None:
                 break
 

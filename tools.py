@@ -147,6 +147,35 @@ def plot_trajectory(res, config, directory='plots'):
     plt.close()
 
 
+def plot_trajectory_multi(res, config, directory='plots'):
+    os.makedirs(directory, exist_ok=True)
+
+    plt.figure(figsize=(4, 3))
+    for i, value in enumerate(zip(*res['left_fraction'])):
+        plt.plot(res['time_steps'], value, label=f'layer {i} coop')
+    for i, value in enumerate(zip(*res['active_density'])):
+        plt.plot(res['time_steps'], value, label=f'layer {i} active')
+    plt.axvline(res['convergence_time'], color='black', linestyle='--')
+    plt.ylim([0, 1])
+    plt.legend()
+    plt.xlabel('MC times steps')
+    plt.title(f"Trajectory for N={config['num_nodes']}, k={config['av_degree']}")
+    description = (f"edge overlap = {1-config['multilayer']['to_rewire']}, " +
+                   f"node overlap = {config['multilayer']['shared_nodes_ratio']}\n")
+    for i, lc in enumerate(config['multilayer']['layers_config']):
+        if lc['b'] is not None:
+            description += f"layer {i} has b={lc['b']}"
+        else:
+            description += f"layer {i} has R={lc['R']}, P={lc['P']}, T={lc['T']}, S={lc['S']}\n"
+    plt.figtext(0.05, -0.02, description, fontsize=8)
+    plt.gcf().subplots_adjust(top=0.92, bottom=0.3, right=0.98, left=0.09)
+    # plt.tight_layout()
+
+    plot_name = f'{directory}/trajectory_{config_into_suffix(config)}.pdf'
+    plt.savefig(plot_name)
+    plt.close()
+
+
 def plot_over_param(res, param, config, directory='plots'):
     os.makedirs(directory, exist_ok=True)
     fig = plt.figure(figsize=(4, 3))
