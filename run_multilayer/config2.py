@@ -24,7 +24,7 @@ config_values = {
             "shared_nodes_ratio": None,
             "layers_config": [
                 {"b": None, "R": 1, "P": 0, "S": 0, "T": 0},
-                {"b": None, "R": 1, "P": 0, "S": -1, "T": 1},
+                {"b": None, "R": 1, "P": 0, "S": -2, "T": 2},
             ],
         },
 }

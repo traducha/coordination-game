@@ -4,6 +4,8 @@ import random
 import numpy as np
 import igraph as ig
 
+from datetime import datetime
+
 import constants as const
 from tools import run_with_time, payoff_matrix
 
@@ -185,8 +187,16 @@ class MultiNetCoordination(MultiNet):
 ##############################
 
 
-def initialize_random_reg_net(num_nodes, av_degree):
-    graph = ig.Graph.K_Regular(num_nodes, av_degree, directed=False, multiple=False)
+def initialize_random_reg_net(num_nodes, av_degree, payoff_type=None, b=None, R=None, P=None, T=None, S=None):
+    if av_degree == num_nodes - 1:
+        graph = ig.Graph.Full(num_nodes, directed=False)
+    else:
+        graph = ig.Graph.K_Regular(num_nodes, av_degree, directed=False, multiple=False)
+
+    payoff_dict, payoff_norm = payoff_matrix(payoff_type, b=b, R=R, P=P, T=T, S=S)
+    graph['payoff_dict'] = payoff_dict
+    graph['payoff_norm'] = payoff_norm
+    graph['layer_config'] = {"b": b, "R": R, "P": P, "S": S, "T": T}
 
     graph.vs()['last_payoff'] = 0.5  # average payoff is 0.5
     graph.vs()['strategy'] = const.LEFT

@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 from matplotlib import pyplot as plt
+import logging as log
 import numpy as np
 import json
 import time
 import os
 
 import constants as const
+
+log.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=log.INFO)
 
 
 def run_with_time(func):
@@ -37,7 +40,14 @@ def config_into_suffix(conf):
     num = conf['number_of_loops']
     che = int(conf['check_frozen'])
     sam = conf['sample_size']
-    return f'n{n}_k{k}_b{b}_R{R}_P{P}_T{T}_S{S}_pay{pay}_up{up}_loo{loo}_len{le}_num{num}_che{che}_sam{sam}'
+    if conf.get('multilayer') is None:
+        return f'n{n}_k{k}_b{b}_R{R}_P{P}_T{T}_S{S}_pay{pay}_up{up}_loo{loo}_len{le}_num{num}_che{che}_sam{sam}'
+    else:
+        num_lay = conf['multilayer']['num_layers']
+        rewire = conf['multilayer']['to_rewire']
+        shared_n = conf['multilayer']['shared_nodes_ratio']
+        return (f'n{n}_k{k}_b{b}_R{R}_P{P}_T{T}_S{S}_pay{pay}_up{up}_loo{loo}_len{le}_num{num}_che{che}_sam{sam}'
+                f'_lay{num_lay}_rew{rewire}_shar{shared_n}')
 
 
 def payoff_matrix(_type, b=None, R=None, P=None, T=None, S=None):
@@ -157,7 +167,7 @@ def plot_trajectory_multi(res, config, directory='plots'):
         plt.plot(res['time_steps'], value, label=f'layer {i} active')
     plt.axvline(res['convergence_time'], color='black', linestyle='--')
     plt.ylim([0, 1])
-    plt.legend()
+    plt.legend(fontsize=8)
     plt.xlabel('MC times steps')
     plt.title(f"Trajectory for N={config['num_nodes']}, k={config['av_degree']}")
     description = (f"edge overlap = {1-config['multilayer']['to_rewire']}, " +
@@ -174,6 +184,10 @@ def plot_trajectory_multi(res, config, directory='plots'):
     plot_name = f'{directory}/trajectory_{config_into_suffix(config)}.pdf'
     plt.savefig(plot_name)
     plt.close()
+
+
+def plot_over_param_multi(res, param, config, directory='plots'):
+    return
 
 
 def plot_over_param(res, param, config, directory='plots'):
