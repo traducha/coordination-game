@@ -6,7 +6,7 @@ sys.path.insert(1, '/home/tomasz/PycharmProjects/cooperation-game')
 sys.path.insert(1, sys.path[0])
 from tools import run_with_time, save_stationary_generic, log
 from main import get_stationary_state_sample
-from config import config_values
+from config2 import config_values
 
 
 @run_with_time

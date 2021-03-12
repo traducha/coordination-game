@@ -6,7 +6,7 @@ sys.path.insert(1, '/home/tomasz/PycharmProjects/cooperation-game')
 sys.path.insert(1, sys.path[0])
 from tools import run_with_time, save_stationary_generic, log
 from main import get_stationary_state_sample
-from config import config_values
+from config2 import config_values
 
 
 @run_with_time
@@ -29,7 +29,7 @@ if __name__ == '__main__':
     log.info(f'nov={nov}, update_str_type={update_str_type}, dir_name={dir_name}')
 
     multi_conf = dict(config_values['multilayer'], shared_nodes_ratio=nov)
-    conf = dict(config_values, multilayer=multi_conf, update_str_type=update_str_type)
+    conf = dict(config_values, multilayer=multi_conf, update_str_type=update_str_type, av_degree=100)
 
     log.info(f'Configuration: ')
     pprint(conf)

@@ -29,7 +29,7 @@ if __name__ == '__main__':
     log.info(f'nov={nov}, update_str_type={update_str_type}, dir_name={dir_name}')
 
     multi_conf = dict(config_values['multilayer'], shared_nodes_ratio=nov)
-    conf = dict(config_values, multilayer=multi_conf, update_str_type=update_str_type)
+    conf = dict(config_values, multilayer=multi_conf, update_str_type=update_str_type, av_degree=100)
 
     log.info(f'Configuration: ')
     pprint(conf)
