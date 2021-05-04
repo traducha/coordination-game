@@ -228,7 +228,7 @@ def main_loop_async_multi(network, num_nodes, time_steps, update_func):
 ####################################
 
 
-def get_left_and_active(net, num_nodes, multi=False):
+def get_left_and_active(net, num_nodes, av_degree, multi=False):
     if multi:
         layers = net.layers
     else:
@@ -237,17 +237,20 @@ def get_left_and_active(net, num_nodes, multi=False):
     left_num_res, active_res = [], []
 
     for g in layers:
-        active = 0
-        for edge in g.get_edgelist():
-            if g.vs(edge[0])['strategy'][0] != g.vs(edge[1])['strategy'][0]:
-                active += 1
-        active_res.append(active)
-
         left_num = 0
         for node_id in range(num_nodes):
             if g.vs(node_id)['strategy'][0] == const.LEFT:
                 left_num += 1
         left_num_res.append(left_num)
+
+        if av_degree == num_nodes - 1:  # complete graph
+            active = left_num * (num_nodes - left_num)
+        else:
+            active = 0
+            for edge in g.get_edgelist():
+                if g.vs(edge[0])['strategy'][0] != g.vs(edge[1])['strategy'][0]:
+                    active += 1
+        active_res.append(active)
 
     return (left_num_res, active_res) if len(layers) > 1 else (left_num_res[0], active_res[0])
 
@@ -289,7 +292,7 @@ def run_trajectory(num_nodes=None, av_degree=None, loop_length=None, number_of_l
     else:
         net = initialize_random_reg_net(num_nodes, av_degree, payoff_type=payoff_type, b=b, R=R, P=P, T=T, S=S)
 
-    left_num, active = get_left_and_active(net, num_nodes, multi=multi)
+    left_num, active = get_left_and_active(net, num_nodes, av_degree, multi=multi)
 
     time_steps = [0]
     convergence_t = 0
@@ -308,7 +311,7 @@ def run_trajectory(num_nodes=None, av_degree=None, loop_length=None, number_of_l
         if last_update_time is not None:
             convergence_t = ((i * loop_length) + last_update_time) / time_norm
 
-        left_num, active = get_left_and_active(net, num_nodes, multi=multi)
+        left_num, active = get_left_and_active(net, num_nodes, av_degree, multi=multi)
 
         time_steps.append(((i + 1) * loop_length) / time_norm)  # MC time steps
         if multi:
@@ -361,7 +364,7 @@ def get_stationary_state(num_nodes=None, av_degree=None, loop_length=None, numbe
             if updated is None:
                 break
 
-    left_num, active = get_left_and_active(g, num_nodes)
+    left_num, active = get_left_and_active(g, num_nodes, av_degree)
 
     return convergence_t, left_num / num_nodes, 2.0 * active / (av_degree * num_nodes)
 
@@ -396,7 +399,7 @@ def get_stationary_state_multi(num_nodes=None, av_degree=None, loop_length=None,
             if updated is None:
                 break
 
-    left_num, active = get_left_and_active(net, num_nodes, multi=True)
+    left_num, active = get_left_and_active(net, num_nodes, av_degree, multi=True)
     active = [2.0 * x / (av_degree * num_nodes) for x in active]
     left_num = [x / num_nodes for x in left_num]
 
