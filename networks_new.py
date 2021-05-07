@@ -147,7 +147,7 @@ class MultiNetCoordination(MultiNet):
                              f"for each layer (layers={len(self.layers)})!")
 
         for i in range(self.num_layers):
-            self.layers[i].vs()['last_payoff'] = 0.5
+            self.layers[i].vs()['last_payoff'] = None
 
             conf = layers_config[i]
             payoff_dict, payoff_norm = payoff_matrix(payoff_type, b=conf['b'], R=conf['R'], P=conf['P'], T=conf['T'],
@@ -188,14 +188,17 @@ class MultiNetCoordination(MultiNet):
 
 
 def initialize_random_reg_net(num_nodes, av_degree, payoff_type=None, b=None, R=None, P=None, T=None, S=None):
-    graph = ig.Graph.K_Regular(num_nodes, av_degree, directed=False, multiple=False)
+    if av_degree == num_nodes - 1:
+        graph = ig.Graph.Full(num_nodes, directed=False)
+    else:
+        graph = ig.Graph.K_Regular(num_nodes, av_degree, directed=False, multiple=False)
 
     payoff_dict, payoff_norm = payoff_matrix(payoff_type, b=b, R=R, P=P, T=T, S=S)
     graph['payoff_dict'] = payoff_dict
     graph['payoff_norm'] = payoff_norm
     graph['layer_config'] = {"b": b, "R": R, "P": P, "S": S, "T": T}
 
-    graph.vs()['last_payoff'] = 0.5  # average payoff is 0.5
+    graph.vs()['last_payoff'] = None  # to raise an error if it's not updated
     graph.vs()['strategy'] = const.LEFT
     graph.vs()['color'] = const.GREEN
 
