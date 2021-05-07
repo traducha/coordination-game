@@ -15,8 +15,8 @@ from tools import log
 
 
 def unconditional_imitation(active_payoff, active_strategy, neig_list, pay_off_dict, pay_off_norm, **kwargs):
-    # unconditional imitation - copy the most succesful neig if he's better
-    max_neig_payoff = -10000
+    # unconditional imitation - copy the most successful neig if he's better
+    max_neig_payoff = float('-inf')
     max_neig_strategy = None
     for neig_id, neig_strategy, neig_payoff in neig_list:
         if neig_payoff > max_neig_payoff:
