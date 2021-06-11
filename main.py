@@ -146,7 +146,7 @@ def main_loop_async_update_neigs(graph, num_nodes, time_steps, update_func):
     return last_update
 
 
-def main_loop_synchronous(graph, num_nodes, time_steps, update_func, no_update=False):
+def main_loop_synchronous(graph, num_nodes, time_steps, update_func, no_update=False, only_payoff=False):
     last_update = None
 
     for time_step in range(time_steps):
@@ -186,8 +186,9 @@ def main_loop_synchronous(graph, num_nodes, time_steps, update_func, no_update=F
 
         # update the whole network
         if not no_update:
-            graph.vs()['strategy'] = new_strategies
             graph.vs()['last_payoff'] = new_payoffs
+            if not only_payoff:
+                graph.vs()['strategy'] = new_strategies
 
     return last_update
 
@@ -275,8 +276,11 @@ def get_loop_function(loop_type, multi, num_nodes):
 
 def run_trajectory(num_nodes=None, av_degree=None, loop_length=None, number_of_loops=None, loop_type=None,
                    payoff_type=None, update_str_type=None, b=None, R=None, P=None, T=None, S=None, check_frozen=False,
-                   multi=False, multilayer=None, **kwargs):
+                   multi=False, multilayer=None, erdos=False, **kwargs):
     print(f'{datetime.now().strftime("%d/%m/%Y %H:%M:%S")} Running trajectory...')
+
+    main_loop, time_norm = get_loop_function(loop_type, multi, num_nodes)
+    update_func = update_strategy(update_str_type)
 
     if multi:
         if multilayer is None:
@@ -290,7 +294,10 @@ def run_trajectory(num_nodes=None, av_degree=None, loop_length=None, number_of_l
         print(f'{datetime.now().strftime("%d/%m/%Y %H:%M:%S")} Overlapping nodes = {len(net.shared_nodes)} '
               f'(of {net.num_nodes})')
     else:
-        net = initialize_random_reg_net(num_nodes, av_degree, payoff_type=payoff_type, b=b, R=R, P=P, T=T, S=S)
+        net = initialize_random_reg_net(num_nodes, av_degree, payoff_type=payoff_type, b=b, R=R, P=P, T=T, S=S,
+                                        erdos=erdos)
+        main_loop_synchronous(net, num_nodes, 1, update_func, only_payoff=True)
+        # TODO do the payoff initialization for the multilayer case as well
 
     left_num, active = get_left_and_active(net, num_nodes, av_degree, multi=multi)
 
@@ -302,9 +309,6 @@ def run_trajectory(num_nodes=None, av_degree=None, loop_length=None, number_of_l
     else:
         active_nums = [2.0 * active / (av_degree * num_nodes)]
         left_nums = [left_num / num_nodes]
-
-    main_loop, time_norm = get_loop_function(loop_type, multi, num_nodes)
-    update_func = update_strategy(update_str_type)
 
     for i in range(number_of_loops):
         last_update_time = main_loop(net, num_nodes, loop_length, update_func)
@@ -339,9 +343,10 @@ def run_trajectory(num_nodes=None, av_degree=None, loop_length=None, number_of_l
 
 def get_stationary_state(num_nodes=None, av_degree=None, loop_length=None, number_of_loops=None, loop_type=None,
                          payoff_type=None, update_str_type=None, b=None, check_frozen=False, R=None, P=None, T=None,
-                         S=None, **kwargs):
-    g = initialize_random_reg_net(num_nodes, av_degree, payoff_type=payoff_type, b=b, R=R, P=P, T=T, S=S)
+                         S=None, erdos=False, **kwargs):
+    g = initialize_random_reg_net(num_nodes, av_degree, payoff_type=payoff_type, b=b, R=R, P=P, T=T, S=S, erdos=erdos)
     update_func = update_strategy(update_str_type)
+    main_loop_synchronous(g, num_nodes, 1, update_func, only_payoff=True)
 
     if loop_type == const.ASYNC:
         main_loop = main_loop_async
