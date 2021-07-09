@@ -53,7 +53,7 @@ if __name__ == '__main__':
     dir_name = str(sys.argv[3])
     print(T, processes, dir_name)
 
-    for update_type in [const.REPLICATOR]:
+    for update_type in [const.BEST_RESPONSE]:
         config = dict(config_values, update_str_type=update_type, T=T)
         print('Configuration: ')
         pprint(config)

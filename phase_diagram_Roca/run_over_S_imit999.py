@@ -34,7 +34,7 @@ def main(configuration, proc=48, directory=None):
 
     with mp.Pool(processes=proc) as pool:
 
-        for S in np.linspace(-3, 0, 40):
+        for S in np.linspace(-1, 1, 40):
             conf = dict(configuration, S=S)
             async_res.append(pool.apply_async(get_stationary_state_sample, kwds={**conf}, callback=callback(conf),
                              error_callback=error_callback))
@@ -53,8 +53,8 @@ if __name__ == '__main__':
     dir_name = str(sys.argv[3])
     print(T, processes, dir_name)
 
-    for update_type in [const.BEST_RESPONSE]:
-        config = dict(config_values, update_str_type=update_type, T=T)
+    for update_type in [const.UNCOND_IMITATION]:
+        config = dict(config_values, update_str_type=update_type, T=T, av_degree=999)
         print('Configuration: ')
         pprint(config)
         main(config, proc=processes, directory=dir_name)

@@ -53,8 +53,8 @@ if __name__ == '__main__':
     dir_name = str(sys.argv[3])
     print(T, processes, dir_name)
 
-    for update_type in [const.REPLICATOR]:
-        config = dict(config_values, update_str_type=update_type, T=T)
+    for update_type in [const.UNCOND_IMITATION]:
+        config = dict(config_values, update_str_type=update_type, T=T, av_degree=512)
         print('Configuration: ')
         pprint(config)
         main(config, proc=processes, directory=dir_name)

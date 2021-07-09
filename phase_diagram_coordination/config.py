@@ -3,7 +3,7 @@ import constants as const
 
 config_values = {
     "num_nodes": 1000,
-    "av_degree": 999,
+    "av_degree": 8,
     "payoff_type": const.GENERIC,
     "b": None,  # necessary for the complex payoff matrix
     "R": 1,  # parameters for the general payoff matrix
