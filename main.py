@@ -31,6 +31,9 @@ def unconditional_imitation(active_payoff, active_strategy, neig_list, pay_off_d
 
 def best_response(active_payoff, active_strategy, neig_list, pay_off_dict, pay_off_norm, **kwargs):
     # the best response - chose the strategy giving the best pay_off at the current situation
+    if len(neig_list) == 0:  # ER case for small k
+        return active_strategy
+
     payoff_left = 0
     payoff_right = 0
     for neig_id, neig_strategy, neig_payoff in neig_list:
@@ -48,8 +51,11 @@ def best_response(active_payoff, active_strategy, neig_list, pay_off_dict, pay_o
 def replicator_dynamics(active_payoff, active_strategy, neig_list, pay_off_dict, pay_off_norm, check_frozen=False):
     # replicator dynamics - one player is chosen at random and his strategy is copied with some p
     if not check_frozen:
-        neig_id, neig_strategy, neig_payoff = neig_list[np.random.randint(len(neig_list))]
-        probability = (neig_payoff - active_payoff) / (len(neig_list) * pay_off_norm)
+        if len(neig_list) > 0:
+            neig_id, neig_strategy, neig_payoff = neig_list[np.random.randint(len(neig_list))]
+            probability = (neig_payoff - active_payoff) / (len(neig_list) * pay_off_norm)
+        else:
+            return active_strategy
 
         if probability > 0 and np.random.random() < probability:
             return neig_strategy

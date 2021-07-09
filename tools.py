@@ -142,8 +142,8 @@ def plot_trajectory(res, config, directory='plots'):
     os.makedirs(directory, exist_ok=True)
 
     plt.figure(figsize=(4, 3))
-    plt.plot(res['time_steps'], res['left_fraction'], color=const.REDISH, label=r'$\alpha$')
-    plt.plot(res['time_steps'], res['active_density'], color=const.GREEN_BRIGHT, label=r'$\rho$')
+    plt.plot(res['time_steps'], res['left_fraction'], color=const.GREEN_BRIGHT, label=r'$\alpha$')
+    # plt.plot(res['time_steps'], res['active_density'], color=const.REDISH, label=r'$\rho$')
     plt.axvline(res['convergence_time'], color='black', linestyle='--')
     plt.ylim([0, 1])
     plt.legend()
