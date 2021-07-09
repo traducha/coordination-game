@@ -54,7 +54,7 @@ if __name__ == '__main__':
     print(T, processes, dir_name)
 
     for update_type in [const.UNCOND_IMITATION]:
-        config = dict(config_values, update_str_type=update_type, T=T)
+        config = dict(config_values, update_str_type=update_type, T=T, av_degree=8)
         print('Configuration: ')
         pprint(config)
         main(config, proc=processes, directory=dir_name)
