@@ -15,24 +15,23 @@ from tools import read_stationary_generic
 from config import config_values
 
 
-COLORS = [const.GREEN, const.YELLOW]
-COLORS2 = [const.GREEN_DARK, const.ORANGE]
-COLORS3 = [const.REDISH, const.BLUE]
+COLORS = [const.ORANGE, const.REDISH, const.GREEN_DARK, const.BLUE][::-1]
 
 NAMES = {
-    const.BEST_RESPONSE: 'Best response',
-    const.UNCOND_IMITATION: 'Un. imitation',
-    const.REPLICATOR: 'Replicator dyn.',
+    const.BEST_RESPONSE: 'BR',
+    const.UNCOND_IMITATION: 'UI',
+    const.REPLICATOR: 'RD',
 }
 
 NAMES2 = {
     const.BEST_RESPONSE: 'best',
-    const.UNCOND_IMITATION: 'ui',
+    const.UNCOND_IMITATION: 'imit',
     const.REPLICATOR: 'repl',
 }
 
 
-def plot_res(str_type=const.UNCOND_IMITATION, av_degree=8, res_dir='imit_new_res8', old_read=False):
+def plot_res(str_type=const.UNCOND_IMITATION, av_degree=8, T=0.0, res_dir='imit_new_res8',
+             color=None, old_read=False):
     S_list = np.linspace(-3, 0, 40)
 
     conv_time = []
@@ -44,10 +43,10 @@ def plot_res(str_type=const.UNCOND_IMITATION, av_degree=8, res_dir='imit_new_res
     for S in S_list:
         try:
             if not old_read:
-                conf = dict(config_values, update_str_type=str_type, av_degree=av_degree, S=S, T=-1.0)
+                conf = dict(config_values, update_str_type=str_type, av_degree=av_degree, S=S, T=T)
                 res, conf = read_stationary_generic(conf, directory=res_dir)
             else:
-                conf = dict(config_values, update_str_type=str_type, av_degree=av_degree, S=None, T=-1.0)
+                conf = dict(config_values, update_str_type=str_type, av_degree=av_degree, S=None, T=T)
                 res, conf = read_stationary_generic(conf, directory=res_dir)
                 result = None
                 for line in res:
@@ -65,41 +64,47 @@ def plot_res(str_type=const.UNCOND_IMITATION, av_degree=8, res_dir='imit_new_res
         conv_time.append(np.mean(res['convergence_time']))
         conv_time_std.append(np.std(res['convergence_time']))
 
-    plt.plot(S_list, conv_time, label=f'$k={av_degree}$')
+    plt.plot(S_list, conv_time, label=f'$k={av_degree}$', color=color)
 
 
 if __name__ == '__main__':
     fig = plt.figure(figsize=(4, 3))
+    plt.axvline(-2, linestyle='--', color='black', linewidth=0.9)
+    plt.title('f', loc='left', fontweight='bold')
 
-    # type_ = const.UNCOND_IMITATION
-    # plot_res(str_type=type_, av_degree=8, res_dir='imit_new_res8')
-    # plot_res(str_type=type_, av_degree=32, res_dir='imit_new_res32')
-    # plot_res(str_type=type_, av_degree=128, res_dir='imit_new_res128')
-    # plot_res(str_type=type_, av_degree=999, res_dir='imit_new_res999')
+    # T = 0.0
+    T = -1.0
+    # T = 0.0769230769230771
 
     # type_ = const.REPLICATOR
-    # plot_res(str_type=type_, av_degree=8, res_dir='repl_new_res8')
-    # plot_res(str_type=type_, av_degree=32, res_dir='repl_new_res32')
-    # plot_res(str_type=type_, av_degree=128, res_dir='repl_new_res128')
-    # plot_res(str_type=type_, av_degree=999, res_dir='repl_new_res999')
+    # for i, k in enumerate([8, 32, 128, 999]):
+    #     plot_res(str_type=type_, av_degree=k, T=T, res_dir=f'repl_new_res{k}', color=COLORS[i])
 
-    type_ = const.BEST_RESPONSE
-    plot_res(str_type=type_, av_degree=8, res_dir='best_res', old_read=True)
-    plot_res(str_type=type_, av_degree=32, res_dir='best_res32')
-    plot_res(str_type=type_, av_degree=128, res_dir='best_res128')
-    plot_res(str_type=type_, av_degree=999, res_dir='best_res999')
+    # type_ = const.BEST_RESPONSE
+    # plot_res(str_type=type_, av_degree=8, T=T, res_dir='best_res', old_read=True, color=COLORS[0])
+    # for i, k in enumerate([32, 128, 999]):
+    #     plot_res(str_type=type_, av_degree=k, T=T, res_dir=f'best_res{k}', color=COLORS[i+1])
+
+    type_ = const.UNCOND_IMITATION
+    for i, k in enumerate([8, 32, 128, 999]):
+        plot_res(str_type=type_, av_degree=k, T=T, res_dir=f'imit_new_res{k}', color=COLORS[i])
+
+    ##########################################################
 
     plt.legend()
-    plt.xlabel('S')
+    plt.xlabel(r'$S$')
     plt.ylabel(r'$\tau$')
-    plt.title(f"{NAMES[type_]}")
+    plt.title(NAMES[type_])
+
+    # plt.ylim(ymax=12.5)
+    plt.xlim([-3, 0])
 
     left, bottom, width, height = [0.75, 0.3, 0.15, 0.12]
 
     # plt.gcf().subplots_adjust(top=1, bottom=0.8, right=1, left=0.09)
     plt.tight_layout()
 
-    plot_name = f"times_{NAMES2[type_]}_T-1.pdf"
+    plot_name = f"times_{NAMES2[type_]}_T{T}.png"
     plt.savefig(plot_name)
     plt.show()
     plt.close()
