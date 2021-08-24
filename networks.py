@@ -207,7 +207,7 @@ def initialize_random_reg_net(num_nodes, av_degree, erdos=False, payoff_type=Non
 
     for node_idx in random.sample(range(num_nodes), int(num_nodes/2)):
         graph.vs(node_idx)['strategy'] = const.RIGHT
-        graph.vs(node_idx)['color'] = const.GOLD
+        graph.vs(node_idx)['color'] = const.BLUE
 
     return graph
 
