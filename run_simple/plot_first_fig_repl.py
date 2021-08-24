@@ -114,6 +114,7 @@ def plot_res(str_type=const.REPLICATOR, N=1000, res_dir='res_repl_n1000'):
     plt.xlim([0, 60])
     plt.ylim([-0.03, 1.03])
     plt.title("a", loc='left', fontweight='bold')
+    plt.title("RD")
 
     traj_files = {
         const.REPLICATOR: [
@@ -144,7 +145,7 @@ def plot_res(str_type=const.REPLICATOR, N=1000, res_dir='res_repl_n1000'):
 
     ax2.tick_params(axis='both', which='major', labelsize=8)
     ax2.set_ylim([0, 1])
-    ax2.set_xlabel(r'$\tau$')
+    ax2.set_xlabel(r'$t$')
     ax2.set_ylabel(r'$\alpha$')
 
     # plt.gcf().subplots_adjust(top=1, bottom=0.8, right=1, left=0.09)

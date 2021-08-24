@@ -20,10 +20,17 @@ COLORS2 = [const.GREEN_DARK, const.ORANGE]
 COLORS3 = [const.REDISH, const.BLUE]
 
 NAMES = {
-    const.BEST_RESPONSE: 'Best response',
-    const.UNCOND_IMITATION: 'Un. imitation',
-    const.REPLICATOR: 'Replicator dyn.',
+    const.BEST_RESPONSE: 'BR',
+    const.UNCOND_IMITATION: 'UI',
+    const.REPLICATOR: 'RD',
 }
+
+NAMES15 = {
+    const.BEST_RESPONSE: 'b',
+    const.UNCOND_IMITATION: 'c',
+    const.REPLICATOR: 'a',
+}
+
 
 NAMES2 = {
     const.BEST_RESPONSE: 'best',
@@ -32,12 +39,15 @@ NAMES2 = {
 }
 
 
-def plot_res(str_type=const.UNCOND_IMITATION, N=1000, res_dir='res_imit_n1000'):
+def plot_res(str_type=const.REPLICATOR, N=1000, res_dir='res_repl_n1000'):
     fig = plt.figure(figsize=(5, 4.8))
     axs = fig.subplots(3, 3)
     # axs = list(axs[0]) + list(axs[1]) + list(axs[2])
 
-    k_list = [[2,4,5], [6,8,9], [10,11,15]]
+    # RD and BR
+    k_list = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+    # UI
+    # k_list = [[2, 4, 5], [6, 8, 9], [10, 11, 15]]
 
     for i, ax_col in enumerate(axs):
         for j, ax in enumerate(ax_col):
@@ -75,7 +85,8 @@ def plot_res(str_type=const.UNCOND_IMITATION, N=1000, res_dir='res_imit_n1000'):
             if j == 0:
                 ax.set_ylabel(r'$P(\alpha)$')
 
-    fig.suptitle(f"{NAMES[conf['update_str_type']]}, N={conf['num_nodes']}")
+    axs[0][1].set_title(f"{NAMES[conf['update_str_type']]}")
+    axs[0][0].set_title(f"{NAMES15[conf['update_str_type']]}", loc='left', fontweight='bold')
     fig.tight_layout()
     plt.gcf().subplots_adjust(top=0.92, bottom=0.1, right=0.97, left=0.10)
     # fig.subplots_adjust(top=0.99)
