@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 from matplotlib import pyplot as plt
-from matplotlib.patches import Patch
-from matplotlib.lines import Line2D
-import logging as log
+from scipy.optimize import curve_fit
 import numpy as np
-import random
-import json
+
 
 import constants as const
 
@@ -17,6 +14,10 @@ from config2 import config_values
 
 
 COLORS = [const.YELLOW, const.ORANGE, const.REDISH, const.GREEN_DARK, const.BLUE, const.VIOLET]
+
+
+def func(x, b, c):
+    return (x ** b) * c
 
 
 def plot_res(str_type=const.UNCOND_IMITATION, av_degrees=[8, 32, 100, 250, 500, 999]):
@@ -75,11 +76,29 @@ def plot_res(str_type=const.UNCOND_IMITATION, av_degrees=[8, 32, 100, 250, 500, 
     alpha_std_32 = [0.006566917084903686, 0.005444099925607542, 0.004244464041548704,
                     0.002298184065735374, 0.0019362937535405246, 0.0012999068716642722]
 
-    ax2.plot(N_list, alpha_std_8, color=const.VIOLET, linestyle='-')
+    # ax2.plot(N_list, alpha_std_8, color=const.VIOLET, linestyle='-')
+    popt, pcov = curve_fit(func, N_list, alpha_std_8, maxfev=2000)
+    print('power=', popt[0])
+    ax2.plot(np.linspace(490, 16500, 100), func(np.linspace(490, 16500, 100), *popt), color='black', linewidth=1)
+    residuals = np.array(alpha_std_8) - func(np.array(N_list), *popt)
+    ss_res = np.sum(residuals ** 2)
+    ss_tot = np.sum((np.array(alpha_std_8) - np.mean(np.array(alpha_std_8))) ** 2)
+    r_squared = 1 - (ss_res / ss_tot)
+    print('k8 R^2', r_squared)
+
     ax2.scatter(N_list, alpha_std_8, color=const.VIOLET, label=r'$\alpha$ std', facecolors='none', marker='o')
     ax2.text(4000, 0.025, f"$k$=8", fontsize=8)
 
-    ax2.plot(N_list, alpha_std_32, color=const.BLUE, linestyle='-')
+    # ax2.plot(N_list, alpha_std_32, color=const.BLUE, linestyle='-')
+    popt, pcov = curve_fit(func, N_list, alpha_std_32, maxfev=2000)
+    print('power=', popt[0])
+    ax2.plot(np.linspace(490, 16500, 100), func(np.linspace(490, 16500, 100), *popt), color='black', linewidth=1)
+    residuals = np.array(alpha_std_32) - func(np.array(N_list), *popt)
+    ss_res = np.sum(residuals ** 2)
+    ss_tot = np.sum((np.array(alpha_std_32) - np.mean(np.array(alpha_std_32))) ** 2)
+    r_squared = 1 - (ss_res / ss_tot)
+    print('k8 R^2', r_squared)
+
     ax2.scatter(N_list, alpha_std_32, color=const.BLUE, label=r'$\alpha$ std', facecolors='none', marker='D', s=27)
     ax2.text(600, 0.0015, f"$k$=32", fontsize=8)
 
@@ -90,6 +109,8 @@ def plot_res(str_type=const.UNCOND_IMITATION, av_degrees=[8, 32, 100, 250, 500, 
     ax2.set_ylim([0.001, 0.1])
     ax2.set_xlabel(r'$N$')
     ax2.set_ylabel(r'$\alpha_{std}$')
+    ax2.xaxis.labelpad = -2
+    ax2.yaxis.labelpad = 1
 
     plt.tight_layout()
 

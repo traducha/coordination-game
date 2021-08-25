@@ -123,8 +123,10 @@ def plot_res(str_type=const.UNCOND_IMITATION, av_degree=8, res_dir='res_b8_new')
 
     ax2.tick_params(axis='both', which='major', labelsize=8)
     ax2.set_ylim([0, 1])
-    ax2.set_xlabel(r'$\tau$')
+    ax2.set_xlabel(r'$t$')
     ax2.set_ylabel(r'$\alpha$')
+    ax2.xaxis.labelpad = 0
+    ax2.yaxis.labelpad = 1
 
     plt.tight_layout()
 

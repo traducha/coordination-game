@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 from matplotlib import pyplot as plt
-import logging as log
+from scipy.optimize import curve_fit
 import numpy as np
-import json
-import time
-import os
 
 import constants as const
 
 import sys
 sys.path.insert(1, '/home/tomasz/PycharmProjects/cooperation-game')
 sys.path.insert(1, sys.path[0])
+
+
+def func(x, b, c):
+    return -(x ** b) * c
 
 
 def b_to_S(b_list):
@@ -62,11 +63,35 @@ def plot_res():
     left, bottom, width, height = [0.4, 0.28, 0.25, 0.25]
     ax2 = fig.add_axes([left, bottom, width, height])
 
-    # ax2.plot(k_list, b_to_S(b_c_1000), color=const.GREEN)
+    popt, pcov = curve_fit(func, k_list[:-3], b_to_S(b_c_1000)[:-3], maxfev=2000)
+    print('power=', popt[0])
+    ax2.plot(np.linspace(8, 400, 100), func(np.linspace(8, 400, 100), *popt), color='black', linewidth=1)
+    residuals = np.array(b_to_S(b_c_1000)[:-3]) - func(np.array(k_list[:-3]), *popt)
+    ss_res = np.sum(residuals ** 2)
+    ss_tot = np.sum((np.array(b_to_S(b_c_1000)[:-3]) - np.mean(np.array(b_to_S(b_c_1000)[:-3]))) ** 2)
+    r_squared = 1 - (ss_res / ss_tot)
+    print('1000 R^2', r_squared)
+
+    popt, pcov = curve_fit(func, k_list[:-3], b_to_S(b_c_4000)[:-2], maxfev=2000)
+    print('power=', popt[0])
+    # ax2.plot(np.linspace(8, 400, 100), func(np.linspace(8, 400, 100), *popt), color='black', linewidth=1)
+    residuals = np.array(b_to_S(b_c_4000)[:-2]) - func(np.array(k_list[:-3]), *popt)
+    ss_res = np.sum(residuals ** 2)
+    ss_tot = np.sum((np.array(b_to_S(b_c_4000)[:-2]) - np.mean(np.array(b_to_S(b_c_4000)[:-2]))) ** 2)
+    r_squared = 1 - (ss_res / ss_tot)
+    print('4000 R^2', r_squared)
+
+    popt, pcov = curve_fit(func, k_list[:-3], b_to_S(b_c_8000)[:-2], maxfev=2000)
+    print('power=', popt[0])
+    # ax2.plot(np.linspace(8, 400, 100), func(np.linspace(8, 400, 100), *popt), color='black', linewidth=1)
+    residuals = np.array(b_to_S(b_c_8000)[:-2]) - func(np.array(k_list[:-3]), *popt)
+    ss_res = np.sum(residuals ** 2)
+    ss_tot = np.sum((np.array(b_to_S(b_c_8000)[:-2]) - np.mean(np.array(b_to_S(b_c_8000)[:-2]))) ** 2)
+    r_squared = 1 - (ss_res / ss_tot)
+    print('8000 R^2', r_squared)
+
     ax2.scatter(k_list, b_to_S(b_c_1000), color=const.ORANGE, facecolor='None', label=r'$N=1000$')
-    # ax2.plot(k_list, b_to_S(b_c_4000), color=const.BLUE)
     ax2.scatter(k_list[:-1], b_to_S(b_c_4000), color=const.GREEN_DARK, marker='s', s=30, facecolor='None', label=r'$N=4000$')
-    # ax2.plot(k_list, b_to_S(b_c_8000), color=const.REDISH)
     ax2.scatter(k_list[:-1], b_to_S(b_c_8000), color=const.VIOLET, marker='v', facecolor='None', label=r'$N=8000$')
 
     ax2.set_xscale('symlog')
