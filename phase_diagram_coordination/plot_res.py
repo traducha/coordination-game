@@ -53,10 +53,15 @@ plt.axvline(-1, linestyle='--')
 plt.axhline(-1, linestyle='--')
 plt.axhline(0, linestyle='--')
 
-plt.xlabel('S')
-plt.ylabel('T')
-plt.title('UI cooperators')
-# plt.savefig('UI_coop_k32.pdf')
+plt.xlabel(r'$S$')
+plt.ylabel(r'$T$')
+plt.title('BR')
+plt.title('b', loc='left', fontweight='bold')
+ax = plt.gca()
+plt.text(0.05, 0.8, f'$k=8$\n$N=10^3$', fontsize=10, transform=ax.transAxes,
+         color='white')
+plt.tight_layout()
+plt.savefig('BR_coop_k8.pdf')
 plt.show()
 
 

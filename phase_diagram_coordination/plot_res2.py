@@ -38,8 +38,8 @@ for T in T_list:
 
     for S in S_list:
         try:
-            config = dict(config_values, update_str_type=const.UNCOND_IMITATION, T=T, S=S, av_degree=32)
-            res, _ = read_stationary_generic(config, directory=f'imit_new_res32')
+            config = dict(config_values, update_str_type=const.UNCOND_IMITATION, T=T, S=S, av_degree=999)
+            res, _ = read_stationary_generic(config, directory=f'imit_new_res999')
             alpha = np.mean(res['left_fraction'])
             coop_mean_s.append(alpha)
             coop_std_s.append(np.std(res['left_fraction']))
@@ -89,13 +89,19 @@ for i, param in enumerate([coop_mean]):#, coop_std, active_mean, active_std, tim
 
     # plt.figtext(0.23, 0.8, 'b', fontsize=12, weight='bold')
 
-    plt.xlabel('S')
-    plt.ylabel('T')
+    plt.xlabel(r'$S$')
+    plt.ylabel(r'$T$')
     # plt.title(f'{short[config["update_str_type"]]} {names2[i]}, k={config["av_degree"]}')
-    plt.title(r'$\alpha$')
+    plt.title(f'{short[config["update_str_type"]]}')
+    #############################################
+    plt.title('l', loc='left', fontweight='bold')
+    #############################################
+    ax = plt.gca()
+    plt.text(0.05, 0.8, f'$k={config["av_degree"]}$\n$N=10^3$', fontsize=10, transform=ax.transAxes,
+             color='white')
 
     plt.tight_layout()
-    # plt.savefig(f'{short[config["update_str_type"]]}_{names[i]}_k{config["av_degree"]}_new.png')
+    plt.savefig(f'{short[config["update_str_type"]]}_{names[i]}_k{config["av_degree"]}_new.pdf')
     plt.show()
     plt.close()
 
