@@ -46,6 +46,7 @@ def plot_that_shit():
     plt.xlim([-3, 0])
     plt.ylim([-2, 1])
     plt.title('a', loc='left', fontweight='bold')
+    plt.title('RD')
 
     plt.tight_layout()
     plt.savefig('diagram_repl.png')

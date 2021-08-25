@@ -30,7 +30,7 @@ NAMES2 = {
 }
 
 
-def plot_res(str_type=const.UNCOND_IMITATION, av_degree=8, T=0.0, res_dir='imit_new_res8',
+def plot_res(str_type=None, av_degree=None, T=None, res_dir=None,
              color=None, old_read=False):
     S_list = np.linspace(-3, 0, 40)
 
@@ -69,12 +69,17 @@ def plot_res(str_type=const.UNCOND_IMITATION, av_degree=8, T=0.0, res_dir='imit_
 
 if __name__ == '__main__':
     fig = plt.figure(figsize=(4, 3))
-    plt.axvline(-2, linestyle='--', color='black', linewidth=0.9)
-    plt.title('f', loc='left', fontweight='bold')
+    plt.axvline(-1+0.0769230769230771, linestyle='--', color='black', linewidth=0.9)
+    plt.title('c', loc='left', fontweight='bold')
 
     # T = 0.0
-    T = -1.0
-    # T = 0.0769230769230771
+    # T = -1.0
+    T = 0.0769230769230771
+
+    ax = plt.gca()
+    # plt.text(0.05, 0.9, f"$T=-1$", fontsize=10, transform=ax.transAxes)
+    # plt.text(0.8, 0.9, f"$T=0$", fontsize=10, transform=ax.transAxes)
+    plt.text(0.77, 0.9, f"$T=0.08$", fontsize=10, transform=ax.transAxes)
 
     # type_ = const.REPLICATOR
     # for i, k in enumerate([8, 32, 128, 999]):
@@ -96,7 +101,7 @@ if __name__ == '__main__':
     plt.ylabel(r'$\tau$')
     plt.title(NAMES[type_])
 
-    # plt.ylim(ymax=12.5)
+    # plt.ylim(ymax=12.7)
     plt.xlim([-3, 0])
 
     left, bottom, width, height = [0.75, 0.3, 0.15, 0.12]

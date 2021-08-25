@@ -46,6 +46,7 @@ def plot_that_shit():
     plt.xlim([-3, 0])
     plt.ylim([-2, 1])
     plt.title('c', loc='left', fontweight='bold')
+    plt.title('UI')
 
     plt.tight_layout()
     plt.savefig('diagram_imit.png')
