@@ -42,8 +42,8 @@ def func(x, a, b, c, d, e):
     return e * (x**4.0) + a * (x**3.0) + b * (x**2.0) + c * x + d
 
 
-def func3(x, b, c, d):
-    return ((x + d) ** b) + c
+def func3(x, b, c):
+    return (x ** b) * c
 
 
 def func4(x, a, b, c):
