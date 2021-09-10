@@ -12,8 +12,8 @@ config_values = {
     "T": None,
     "update_str_type": None,
     "loop_type": const.ASYNC,
-    "loop_length": 100000,
-    "number_of_loops": 20,
+    "loop_length": 10,
+    "number_of_loops": 10000,
     "check_frozen": True,
     "sample_size": 100,
     "multilayer":

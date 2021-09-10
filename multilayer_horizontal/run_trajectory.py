@@ -6,7 +6,7 @@ import sys
 
 sys.path.insert(1, '/home/tomasz/PycharmProjects/cooperation-game')
 sys.path.insert(1, sys.path[0])
-from tools import run_with_time, save_trajectory, read_trajectory, plot_trajectory_multi
+from tools import run_with_time, save_trajectory, read_trajectory, plot_trajectory_multi, log
 from main import run_trajectory
 import constants as const
 from config import config_values
@@ -28,10 +28,10 @@ def main(configuration):
 
 
 if __name__ == '__main__':
-    for to_rewire in [0, 1]:
-        for shared_nodes_ratio in [x/2.0 for x in range(3)]:
-            multi_conf = dict(config_values['multilayer'], to_rewire=to_rewire, shared_nodes_ratio=shared_nodes_ratio)
-            conf = dict(config_values, multilayer=multi_conf, update_str_type=const.UNCOND_IMITATION)  # TODO
-            print(f'{datetime.now().strftime("%d/%m/%Y %H:%M:%S")} Configuration: ')
-            pprint(conf)
-            main(conf)
+    update_rule = const.REPLICATOR
+    for shared_nodes_ratio in [0, 0.5, 1]:
+        multi_conf = dict(config_values['multilayer'], shared_nodes_ratio=shared_nodes_ratio)
+        conf = dict(config_values, multilayer=multi_conf, update_str_type=update_rule)
+        log.info(f'Configuration: ')
+        pprint(conf)
+        main(conf)

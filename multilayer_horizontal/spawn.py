@@ -11,9 +11,9 @@ if __name__ == '__main__':
     py_path = '/home/tomasz/anaconda2/envs/conda_python3.6/bin/python3'
 
     ###########################################
-    script = 'run_over_nov5.py'
+    script = 'run_over_nov.py'
     ###########################################
-    results_dir = "res_best_b_wider"
+    results_dir = "res_best_test"
     ###########################################
     update_str_type = const.BEST_RESPONSE
     ###########################################
