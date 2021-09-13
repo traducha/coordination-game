@@ -199,12 +199,32 @@ def main_loop_synchronous(graph, num_nodes, time_steps, update_func, no_update=F
     return last_update
 
 
+def initialize_payoff_multi(network, num_nodes):
+    for active_node in range(num_nodes):
+        if active_node in network.shared_nodes:
+            layer_index = np.random.randint(0, network.num_layers)
+            graph = network.get_layer(layer_index)
+
+            active_payoff = compute_payoff(graph, active_node, graph['payoff_dict'])
+            network.update_node(active_node, layer_index, trait_name='last_payoff', trait_value=active_payoff)
+
+        elif active_node in network.individual_nodes:
+            for i, graph in enumerate(network.layers):
+                active_payoff = compute_payoff(graph, active_node, graph['payoff_dict'])
+                network.update_node(active_node, i, trait_name='last_payoff', trait_value=active_payoff)
+
+        else:
+            raise AttributeError('This node is not shared nor individual! '
+                                 'Something is seriously wrong with network generation...')
+    return network
+
+
 def main_loop_async_multi(network, num_nodes, time_steps, update_func):
     last_update = None
 
     for time_step in range(time_steps):
         layer_index = np.random.randint(0, network.num_layers)
-        graph = network.layers[layer_index]
+        graph = network.get_layer(layer_index)
 
         active_node = np.random.randint(0, num_nodes)
         neighbors = graph.neighbors(active_node)
@@ -295,6 +315,8 @@ def run_trajectory(num_nodes=None, av_degree=None, loop_length=None, number_of_l
                                    to_rewire=multilayer['to_rewire'], layers_config=multilayer['layers_config'],
                                    shared_nodes_ratio=multilayer['shared_nodes_ratio'], payoff_type=payoff_type,
                                    rewire_first_layer=multilayer['rewire_first_layer'])
+        net = initialize_payoff_multi(net, num_nodes)
+
         print(f'{datetime.now().strftime("%d/%m/%Y %H:%M:%S")} Rewired edges = {net.rewired_fraction}, '
               f'edge overlap = {net.compute_av_edge_overlap()}')
         print(f'{datetime.now().strftime("%d/%m/%Y %H:%M:%S")} Overlapping nodes = {len(net.shared_nodes)} '
@@ -303,7 +325,6 @@ def run_trajectory(num_nodes=None, av_degree=None, loop_length=None, number_of_l
         net = initialize_random_reg_net(num_nodes, av_degree, payoff_type=payoff_type, b=b, R=R, P=P, T=T, S=S,
                                         erdos=erdos)
         main_loop_synchronous(net, num_nodes, 1, update_func, only_payoff=True)
-        # TODO do the payoff initialization for the multilayer case as well
 
     left_num, active = get_left_and_active(net, num_nodes, av_degree, multi=multi)
 
@@ -389,6 +410,7 @@ def get_stationary_state_multi(num_nodes=None, av_degree=None, loop_length=None,
                                to_rewire=multilayer['to_rewire'], layers_config=multilayer['layers_config'],
                                shared_nodes_ratio=multilayer['shared_nodes_ratio'], payoff_type=payoff_type,
                                rewire_first_layer=multilayer['rewire_first_layer'])
+    net = initialize_payoff_multi(net, num_nodes)
 
     main_loop, time_norm = get_loop_function(loop_type, True, num_nodes)
     update_func = update_strategy(update_str_type)

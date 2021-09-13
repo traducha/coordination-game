@@ -116,22 +116,22 @@ class MultiNet:
             for g in self.layers:
                 g.vs(node_index)[trait_name] = trait_value
         else:
-            self.layers[layer_index].vs(node_index)[trait_name] = trait_value
+            self.get_layer(layer_index).vs(node_index)[trait_name] = trait_value
 
     def compute_av_edge_overlap(self):
         count = 0.0
         overlap = 0.0
         for i in range(self.num_layers - 1):
             for j in range(i+1, self.num_layers):
-                edge_set_one = set(self.layers[i].get_edgelist())
-                edge_set_two = set(self.layers[j].get_edgelist())
+                edge_set_one = set(self.get_layer(i).get_edgelist())
+                edge_set_two = set(self.get_layer(j).get_edgelist())
                 count += 1.0
                 overlap += 1.0 * len(edge_set_one.intersection(edge_set_two)) / self.num_edges
         return overlap / count
 
     def compute_edge_overlap(self, layer_one, layer_two):
-        edge_set_one = set(self.layers[layer_one].get_edgelist())
-        edge_set_two = set(self.layers[layer_two].get_edgelist())
+        edge_set_one = set(self.get_layer(layer_one).get_edgelist())
+        edge_set_two = set(self.get_layer(layer_two).get_edgelist())
         return 1.0 * len(edge_set_one.intersection(set(edge_set_two))) / len(edge_set_one)
 
 
@@ -147,7 +147,7 @@ class MultiNetCoordination(MultiNet):
                              f"for each layer (layers={len(self.layers)})!")
 
         for i in range(self.num_layers):
-            self.layers[i].vs()['last_payoff'] = None
+            self.get_layer(i).vs()['last_payoff'] = None  # to raise an error if it's not updated
 
             conf = layers_config[i]
             payoff_dict, payoff_norm = payoff_matrix(payoff_type, b=conf['b'], R=conf['R'], P=conf['P'], T=conf['T'],
@@ -155,31 +155,29 @@ class MultiNetCoordination(MultiNet):
             self.payoff_dicts = self.payoff_dicts + (payoff_dict,)
             self.payoff_norms = self.payoff_norms + (payoff_norm,)
 
-            self.layers[i]['index_number'] = i
-            self.layers[i]['payoff_dict'] = payoff_dict
-            self.layers[i]['payoff_norm'] = payoff_norm
-            self.layers[i]['layer_config'] = conf
+            self.get_layer(i)['index_number'] = i
+            self.get_layer(i)['payoff_dict'] = payoff_dict
+            self.get_layer(i)['payoff_norm'] = payoff_norm
+            self.get_layer(i)['layer_config'] = conf
 
             for node_idx in self.individual_nodes:
-                self.layers[i].vs(node_idx)['shared'] = False
+                self.get_layer(i).vs(node_idx)['shared'] = False
                 if np.random.random() < left_prob:
-                    self.layers[i].vs(node_idx)['strategy'] = const.LEFT
-                    self.layers[i].vs(node_idx)['color'] = const.GREEN
+                    self.get_layer(i).vs(node_idx)['strategy'] = const.LEFT
+                    self.get_layer(i).vs(node_idx)['color'] = const.REDISH
                 else:
-                    self.layers[i].vs(node_idx)['strategy'] = const.RIGHT
-                    self.layers[i].vs(node_idx)['color'] = const.GOLD
+                    self.get_layer(i).vs(node_idx)['strategy'] = const.RIGHT
+                    self.get_layer(i).vs(node_idx)['color'] = const.BLUE
 
         for node_idx in self.shared_nodes:
             if np.random.random() < left_prob:
-                for i in range(self.num_layers):
-                    self.layers[i].vs(node_idx)['shared'] = True
-                    self.layers[i].vs(node_idx)['strategy'] = const.LEFT
-                    self.layers[i].vs(node_idx)['color'] = const.GREEN
+                self.update_node(node_idx, 0, trait_name='shared', trait_value=True)
+                self.update_node(node_idx, 0, trait_name='strategy', trait_value=const.LEFT)
+                self.update_node(node_idx, 0, trait_name='color', trait_value=const.REDISH)
             else:
-                for i in range(self.num_layers):
-                    self.layers[i].vs(node_idx)['shared'] = True
-                    self.layers[i].vs(node_idx)['strategy'] = const.RIGHT
-                    self.layers[i].vs(node_idx)['color'] = const.GOLD
+                self.update_node(node_idx, 0, trait_name='shared', trait_value=True)
+                self.update_node(node_idx, 0, trait_name='strategy', trait_value=const.RIGHT)
+                self.update_node(node_idx, 0, trait_name='color', trait_value=const.BLUE)
 
 
 ##############################
@@ -203,7 +201,7 @@ def initialize_random_reg_net(num_nodes, av_degree, erdos=False, payoff_type=Non
 
     graph.vs()['last_payoff'] = None  # to raise an error if it's not updated
     graph.vs()['strategy'] = const.LEFT
-    graph.vs()['color'] = const.GREEN
+    graph.vs()['color'] = const.REDISH
 
     for node_idx in random.sample(range(num_nodes), int(num_nodes/2)):
         graph.vs(node_idx)['strategy'] = const.RIGHT

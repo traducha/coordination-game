@@ -22,6 +22,13 @@ UNCOND_IMITATION = 2
 REPLICATOR = 3
 BEST_RESPONSE = 4
 
+# update rules short names dict
+rules_names = {
+    UNCOND_IMITATION: 'UI',
+    REPLICATOR: 'RD',
+    BEST_RESPONSE: 'BR',
+}
+
 # payoff matrix
 COMPLEX = 0  # complex one with -b
 SIMPLE = 1  # simple one with 1,1 and 0,0

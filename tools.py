@@ -10,6 +10,12 @@ import constants as const
 
 log.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=log.INFO)
 
+rules_dicts = {
+    const.UNCOND_IMITATION: 'imit',
+    const.REPLICATOR: 'repl',
+    const.BEST_RESPONSE: 'best',
+}
+
 
 def run_with_time(func):
     def inner(*args, **kwargs):
@@ -152,7 +158,7 @@ def plot_trajectory(res, config, directory='plots'):
               + (f", b={config['b']}" if config['payoff_type'] == const.COMPLEX else ''))
     plt.tight_layout()
 
-    plot_name = f'{directory}/trajectory_{config_into_suffix(config)}.pdf'
+    plot_name = f'{directory}/trajectory_{config_into_suffix(config)}.png'
     plt.savefig(plot_name)
     plt.close()
 
@@ -164,7 +170,7 @@ def plot_trajectory_multi(res, config, directory='plots'):
     for i, value in enumerate(zip(*res['left_fraction'])):
         plt.plot(res['time_steps'], value, label=f'layer {i} coop')
     for i, value in enumerate(zip(*res['active_density'])):
-        plt.plot(res['time_steps'], value, label=f'layer {i} active')
+        plt.plot(res['time_steps'], value, label=f'layer {i} active', alpha=0.5)
     plt.axvline(res['convergence_time'], color='black', linestyle='--')
     plt.ylim([0, 1])
     plt.legend(fontsize=8)
@@ -181,7 +187,7 @@ def plot_trajectory_multi(res, config, directory='plots'):
     plt.gcf().subplots_adjust(top=0.92, bottom=0.3, right=0.98, left=0.09)
     # plt.tight_layout()
 
-    plot_name = f'{directory}/trajectory_{config_into_suffix(config)}.pdf'
+    plot_name = f'{directory}/trajectory_{config_into_suffix(config)}.png'
     plt.savefig(plot_name)
     plt.close()
 
