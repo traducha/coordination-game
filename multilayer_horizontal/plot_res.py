@@ -11,25 +11,14 @@ import constants as const
 import sys
 sys.path.insert(1, '/home/tomasz/PycharmProjects/cooperation-game')
 sys.path.insert(1, sys.path[0])
-from tools import read_stationary_generic
-from config3 import config_values
+from tools import read_stationary_generic, rules_dicts
+from constants import rules_names as names
+from config import config_values
 
 
 COLORS = [const.GREEN, const.YELLOW]
 COLORS2 = [const.GREEN_DARK, const.ORANGE]
 COLORS3 = [const.REDISH, const.BLUE]
-
-NAMES = {
-    const.BEST_RESPONSE: 'Best response',
-    const.UNCOND_IMITATION: 'Un. imitation',
-    const.REPLICATOR: 'Replicator dyn.',
-}
-
-NAMES2 = {
-    const.BEST_RESPONSE: 'best',
-    const.UNCOND_IMITATION: 'ui',
-    const.REPLICATOR: 'repl',
-}
 
 
 def plot_res(str_type=const.REPLICATOR, av_degree=8, res_dir='res_repl_b', out_dir='plots'):
@@ -70,21 +59,18 @@ def plot_res(str_type=const.REPLICATOR, av_degree=8, res_dir='res_repl_b', out_d
     plt.plot(node_overlap_list, [x[0]-x[1] for x in coop], label=r'$\Delta\alpha$', color='#777777', linestyle='--')
 
     for i, value in enumerate(zip(*active)):
-        plt.plot(node_overlap_list, value, label=f'L{i}' + r' $\rho$', color=COLORS3[i])
+        plt.plot(node_overlap_list, value, label=f'L{i}' + r' $\rho$', color=COLORS3[i], alpha=0.5)
 
-    # plt.errorbar(averages[0], averages[3], yerr=deviations[3], markerfacecolor='none', color=const.REDISH)
-    # plt.errorbar(averages[0], averages[2], yerr=deviations[2], markerfacecolor='none', color=const.GREEN_BRIGHT)
 
     plt.legend()
     plt.xlabel('node overlap')
-    plt.title(f"{NAMES[conf['update_str_type']]}, N={conf['num_nodes']}, k={conf['av_degree']}")
-              #+ (f", b={conf['b']}" if conf['b'] is not None else ''))
+    ds = round(float(res_dir.split('gap')[1]), 1)
+    plt.title(f"{names[conf['update_str_type']]}, N={conf['num_nodes']}, k={conf['av_degree']}, $\Delta$S={ds}")
 
     left, bottom, width, height = [0.57, 0.5, 0.15, 0.12]
     ax2 = fig.add_axes([left, bottom, width, height])
     ax2.patch.set_alpha(0.4)
     ax2.plot(node_overlap_list, conv_time, color=const.BLUE, label=r'$\tau$', alpha=0.7)
-    # ax2.errorbar(node_overlap_list, conv_time_std, yerr=deviations[1], markerfacecolor='none', color=const.BLUE)
     ax2.legend(handlelength=0, handletextpad=0, fancybox=True, fontsize=8)
     ax2.tick_params(axis='both', which='major', labelsize=8)
 
@@ -95,7 +81,7 @@ def plot_res(str_type=const.REPLICATOR, av_degree=8, res_dir='res_repl_b', out_d
     # plt.gcf().subplots_adjust(top=1, bottom=0.8, right=1, left=0.09)
     plt.tight_layout()
 
-    plot_name = f"{res_dir}/nov_{NAMES2[conf['update_str_type']]}_k{conf['av_degree']}.pdf"
+    plot_name = f"plots/{res_dir[4:].split('gap')[0] + f'gap{ds}'}.png"
     plt.savefig(plot_name)
     plt.show()
     plt.close()
@@ -103,12 +89,12 @@ def plot_res(str_type=const.REPLICATOR, av_degree=8, res_dir='res_repl_b', out_d
 
 if __name__ == '__main__':
     for directory in os.listdir():
-        if os.path.isdir(directory) and 'res_best_' in directory:
+        if os.path.isdir(directory) and 'res_repl' in directory:
             print(directory)
-            if 'av100' in directory:
-                k = 100
+            if 'k999' in directory:
+                continue
             else:
                 k = 8
-            plot_res(str_type=const.BEST_RESPONSE, av_degree=k, res_dir=directory)
+            plot_res(str_type=const.REPLICATOR, av_degree=k, res_dir=directory)
 
 

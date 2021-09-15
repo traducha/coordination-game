@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from pprint import pprint
 import sys
+import os
 
 sys.path.insert(1, '/home/tomasz/PycharmProjects/cooperation-game')
 sys.path.insert(1, sys.path[0])
-from tools import run_with_time, save_stationary_generic, log
+from tools import run_with_time, save_stationary_generic, log, config_into_suffix
 from constants import rules_names as rules
 from main import get_stationary_state_sample
 from config import config_values
@@ -41,7 +42,12 @@ if __name__ == '__main__':
 
     multi_conf = dict(config_values['multilayer'], shared_nodes_ratio=nov, layers_config=layers_config)
     conf = dict(config_values, multilayer=multi_conf, update_str_type=update_str_type, av_degree=8)
-
     log.info(f'Configuration: ')
     pprint(conf)
-    main(conf, dir_name)
+
+    # check if the results exit already
+    f_name = f'{dir_name}/stationary_generic_{config_into_suffix(conf)}.json'
+    if os.path.isfile(f_name):
+        log.info('Results for this configuration of parameters already exist.')
+    else:
+        main(conf, dir_name)
