@@ -20,7 +20,10 @@ class MultiNet:
     max_rewiring_tries = 20
 
     def initialize_single_layer(self):
-        return ig.Graph.K_Regular(self.num_nodes, self.av_degree, directed=False, multiple=False)
+        if self.av_degree == self.num_nodes - 1:
+            return ig.Graph.Full(self.num_nodes, directed=False)
+        else:
+            return ig.Graph.K_Regular(self.num_nodes, self.av_degree, directed=False, multiple=False)
 
     def __init__(self, num_nodes=None, av_degree=None, num_layers=None, to_rewire=None, shared_nodes_ratio=None,
                  rewire_first_layer=True):

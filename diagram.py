@@ -64,7 +64,7 @@ def plot():
     plt.ylabel(r"$T$", fontsize=11)
     plt.tight_layout()
 
-    plt.savefig("diagram.png")
+    plt.savefig("plots/diagram.png")
     plt.show()
     plt.close()
 
