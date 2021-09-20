@@ -11,6 +11,7 @@ from config import config_values
 
 if __name__ == '__main__':
     py_path = '/home/tomasz/anaconda2/envs/conda_python3.6/bin/python3'
+    script = f'run_over_nov.py'
 
     ###########################################
     update_str_type = const.BEST_RESPONSE
@@ -25,7 +26,6 @@ if __name__ == '__main__':
     node_overlap_list = np.linspace(0, 1, 30)
     ###########################################
 
-    script = f'run_over_nov.py'
     results_dir = f"res_{rules[update_str_type]}_k{k}_gap{S1-S2}"
     os.makedirs(results_dir, exist_ok=True)
 
