@@ -32,7 +32,8 @@ if __name__ == '__main__':
     S1 = float(sys.argv[5])
     T2 = float(sys.argv[6])
     S2 = float(sys.argv[7])
-    log.info(f'nov={nov}, update_str_type={rules[update_str_type]}, dir_name={dir_name}')
+    k = int(sys.argv[8])
+    log.info(f'k={k}, nov={nov}, update_str_type={rules[update_str_type]}, dir_name={dir_name}')
 
     layers_config = config_values['multilayer']['layers_config']
     layers_config[0]['T'] = T1
@@ -41,7 +42,7 @@ if __name__ == '__main__':
     layers_config[1]['S'] = S2
 
     multi_conf = dict(config_values['multilayer'], shared_nodes_ratio=nov, layers_config=layers_config)
-    conf = dict(config_values, multilayer=multi_conf, update_str_type=update_str_type, av_degree=8)
+    conf = dict(config_values, multilayer=multi_conf, update_str_type=update_str_type, av_degree=k)
     log.info(f'Configuration: ')
     pprint(conf)
 

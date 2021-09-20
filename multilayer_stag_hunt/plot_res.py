@@ -101,7 +101,7 @@ def plot_res(str_type=None, av_degree=None, res_dir=''):
     # plt.gcf().subplots_adjust(top=1, bottom=0.8, right=1, left=0.09)
     plt.tight_layout()
 
-    plot_name = f"plots/{res_dir[4:].split('gap')[0] + f'gap{ds}'}.png"
+    plot_name = f"plots/{res_dir[8:].split('gap')[0] + f'gap{ds}'}.png"
     plt.savefig(plot_name)
     plt.show()
     plt.close()
@@ -116,7 +116,8 @@ if __name__ == '__main__':
     ds_list = []
     q_c_list = []
     q_c_fit_list = []
-    for directory in os.listdir():
+    for directory in os.listdir(os.path.abspath('res')):
+        directory = 'res/' + directory
         if os.path.isdir(directory) and f'res_{rules_dicts[str_type]}_k{k}' in directory:
             print(directory)
             ds, q_c, q_c_fit = plot_res(str_type=str_type, av_degree=k, res_dir=directory)
