@@ -114,7 +114,7 @@ def plot_res(str_type=const.UNCOND_IMITATION, av_degrees=[8, 32, 100, 250, 500, 
 
     plt.tight_layout()
 
-    plot_name = f"imit_S_b_k.png"
+    plot_name = f"imit_S_b_k.pdf"
     plt.savefig(plot_name)
     plt.show()
     plt.close()

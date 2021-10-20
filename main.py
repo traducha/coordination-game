@@ -250,6 +250,37 @@ def main_loop_async_multi(network, num_nodes, time_steps, update_func):
     return last_update
 
 
+def main_loop_async_multi_complete(network, num_nodes, time_steps, update_func):
+    last_update = None
+
+    for time_step in range(time_steps):
+        layer_index = np.random.randint(0, network.num_layers)
+        graph = network.get_layer(layer_index)
+
+        active_node = np.random.randint(0, num_nodes)
+        neighbors = graph.neighbors(active_node)
+
+        active_strategy = graph.vs(active_node)['strategy'][0]
+        active_payoff = 0
+        neig_list = []  # [(id, strategy, payoff), ...]
+
+        # compute the payoff playing with neighbors
+        for neig in neighbors:
+            neig_list.append((neig, graph.vs(neig)['strategy'][0], graph.vs(neig)['last_payoff'][0]))
+            active_payoff += graph['payoff_dict'][active_strategy][graph.vs(neig)['strategy'][0]]
+
+        # update the strategy
+        new_strategy = update_func(active_payoff, active_strategy, neig_list, graph['payoff_dict'], graph['payoff_norm'])
+
+        network.update_node(active_node, layer_index, trait_name='strategy', trait_value=new_strategy)
+        network.update_node(active_node, layer_index, trait_name='last_payoff', trait_value=active_payoff)
+
+        if new_strategy != active_strategy:
+            last_update = time_step
+
+    return last_update
+
+
 ####################################
 #           simulations            #
 ####################################

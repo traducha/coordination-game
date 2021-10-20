@@ -138,7 +138,7 @@ def plot_res(str_type=const.UNCOND_IMITATION, N_list=(500, 1000, 2000, 4000, 800
 
     plt.tight_layout()
 
-    plot_name = f"simple_{NAMES2[conf['update_str_type']]}_scaling.png"
+    plot_name = f"simple_{NAMES2[conf['update_str_type']]}_scaling.pdf"
     plt.savefig(plot_name)
     plt.show()
     plt.close()

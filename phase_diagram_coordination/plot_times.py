@@ -65,11 +65,23 @@ def plot_res(str_type=None, av_degree=None, T=None, res_dir=None,
         conv_time_std.append(np.std(res['convergence_time']))
 
     plt.plot(S_list, conv_time, label=f'$k={av_degree}$', color=color)
+    print(S_list)
 
 
 if __name__ == '__main__':
     fig = plt.figure(figsize=(4, 3))
-    plt.axvline(-1+0.0769230769230771, linestyle='--', color='black', linewidth=0.9)
+    # plt.axvline(-1, linestyle='-.', color='black', linewidth=0.9)
+    # plt.axvline(-2, linestyle='-.', color='black', linewidth=0.9)
+
+    # for UI
+    # plt.axvline(-2, linestyle='-.', color='black', linewidth=0.9)
+    # plt.axvline(-2.923076923076923, linestyle=':', color='black', linewidth=0.9)
+    # plt.axvline(-2.4615384615384617, linestyle=':', color='black', linewidth=0.9)
+
+    plt.axvline(-0.9230769230769229, linestyle='-.', color='black', linewidth=0.9)
+    plt.axvline(-1.4615384615384615, linestyle=':', color='black', linewidth=0.9)
+    plt.axvline(-1.923076923076923, linestyle=':', color='black', linewidth=0.9)
+    plt.axvline(-2.76923077, linestyle=':', color='black', linewidth=0.9)
     plt.title('c', loc='left', fontweight='bold')
 
     # T = 0.0
@@ -96,7 +108,8 @@ if __name__ == '__main__':
 
     ##########################################################
 
-    plt.legend()
+    plt.legend(loc=9)
+    # plt.legend()
     plt.xlabel(r'$S$')
     plt.ylabel(r'$\tau$')
     plt.title(NAMES[type_])
@@ -109,7 +122,7 @@ if __name__ == '__main__':
     # plt.gcf().subplots_adjust(top=1, bottom=0.8, right=1, left=0.09)
     plt.tight_layout()
 
-    plot_name = f"times_{NAMES2[type_]}_T{T}.png"
+    plot_name = f"times_{NAMES2[type_]}_T{T}.pdf"
     plt.savefig(plot_name)
     plt.show()
     plt.close()

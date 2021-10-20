@@ -145,7 +145,7 @@ def plot_res(str_type=const.UNCOND_IMITATION, N=1000, res_dir='res_imit_n1000'):
     # plt.gcf().subplots_adjust(top=1, bottom=0.8, right=1, left=0.09)
     plt.tight_layout()
 
-    plot_name = f"simple_imit_traj.png"
+    plot_name = f"simple_imit_traj.pdf"
     plt.savefig(plot_name)
     plt.show()
     plt.close()

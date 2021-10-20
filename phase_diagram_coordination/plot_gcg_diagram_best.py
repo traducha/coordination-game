@@ -49,7 +49,7 @@ def plot_that_shit():
     plt.title('BR')
 
     plt.tight_layout()
-    plt.savefig('diagram_best.png')
+    plt.savefig('diagram_best.pdf')
     plt.show()
 
 

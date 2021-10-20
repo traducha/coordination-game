@@ -15,8 +15,8 @@ if __name__ == '__main__':
     n = 150
     update_func = unconditional_imitation
 
-    for k in [1, 2, 3, 4]:
-        g = initialize_random_reg_net(n, k, erdos=True, payoff_type=const.SIMPLE)
+    for k in [3]:
+        g = initialize_random_reg_net(n, k, erdos=False, payoff_type=const.SIMPLE)
         main_loop_synchronous(g, n, 1, update_func, only_payoff=True)
 
         # for node_idx in range(n):
@@ -41,12 +41,12 @@ if __name__ == '__main__':
 
         for node_idx in range(n):
             if g.vs(node_idx)['strategy'][0] == const.RIGHT:
-                g.vs(node_idx)['color'] = const.BLUE
+                g.vs(node_idx)['color'] = const.REDISH
             else:
-                g.vs(node_idx)['color'] = const.GREEN
+                g.vs(node_idx)['color'] = const.BLUE
             # g.vs(node_idx)["label"] = g.vs(node_idx)['last_payoff']
 
-        ig.plot(g, layout=ll, target=f'er_net_k{k}.png', bbox=[250, 250])
+        ig.plot(g, layout=ll, target=f'net_k{k}.pdf', bbox=[250, 250])
 
 
 

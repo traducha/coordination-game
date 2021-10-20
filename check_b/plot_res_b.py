@@ -32,13 +32,15 @@ NAMES2 = {
 }
 
 
-def plot_res(str_type=const.UNCOND_IMITATION, av_degree=500, res_dir='res_b500_new_8000', out_dir='plots'):
+def plot_res(str_type=const.UNCOND_IMITATION, av_degree=8, res_dir='imit_res_b_k8_new', out_dir='plots'):
     fig = plt.figure(figsize=(4, 3))
     plt.axvline(1, linestyle='--', color='black', linewidth=0.9)
 
-    b_list = np.linspace(0.9, 2, 15)
+    # b_list = np.linspace(0.9, 2, 15)
     # b_list = np.linspace(0, 4, 30)
     # b_list = np.linspace(-9, 11, 100)
+    b_list = np.linspace(-11, 11, 50)
+    # b_list = np.linspace(-11, 30, 50)
 
     conv_time = []
     conv_time_std = []
@@ -51,7 +53,7 @@ def plot_res(str_type=const.UNCOND_IMITATION, av_degree=500, res_dir='res_b500_n
     for b in b_list:
         try:
             conf = dict(config_values, update_str_type=str_type, av_degree=av_degree, b=b,
-                        num_nodes=8000, sample_size=50)
+                        num_nodes=1000, sample_size=20)
             res, conf = read_stationary_generic(conf, directory=res_dir)
         except Exception:
             # print('ERROR? WHY?')  # it's if the simulation didn't finish yet
@@ -78,7 +80,7 @@ def plot_res(str_type=const.UNCOND_IMITATION, av_degree=500, res_dir='res_b500_n
 
     plt.plot(b_list, active, label=r'$\rho$', color=COLORS3[0])
 
-    plt.axvline(max_b, linestyle='--', color='black', linewidth=0.9)
+    # plt.axvline(max_b, linestyle='--', color='black', linewidth=0.9)
     print(max_b)
 
     plt.gca().invert_xaxis()
@@ -88,23 +90,23 @@ def plot_res(str_type=const.UNCOND_IMITATION, av_degree=500, res_dir='res_b500_n
 
     plt.legend()
     plt.xlabel('b')
-    plt.xlim([2, 0.9])
-    plt.title(f"ER {NAMES[conf['update_str_type']]}, N={conf['num_nodes']}, k={conf['av_degree']}")
+    # plt.xlim([2, 0.9])
+    plt.title(f"{NAMES[conf['update_str_type']]}, N={conf['num_nodes']}, k={conf['av_degree']}")
               #+ (f", b={conf['b']}" if conf['b'] is not None else ''))
 
     left, bottom, width, height = [0.75, 0.5, 0.15, 0.12]
     ax2 = fig.add_axes([left, bottom, width, height])
     ax2.patch.set_alpha(0.4)
-    ax2.axvline(max_b, linestyle='--', color='black')
+    # ax2.axvline(max_b, linestyle='--', color='black')
     ax2.plot(b_list, conv_time, color=const.BLUE, label=r'$\tau$', alpha=0.7)
     ax2.legend(handlelength=0, handletextpad=0, fancybox=True, fontsize=8)
     ax2.tick_params(axis='both', which='major', labelsize=8)
-    ax2.set_xlim([2, 1])
+    # ax2.set_xlim([2, 1])
 
     plt.tight_layout()
 
-    plot_name = f"er_ccg_b_{NAMES2[conf['update_str_type']]}_k{conf['av_degree']}_new.png"
-    # plt.savefig(plot_name)
+    plot_name = f"test_b_{NAMES2[conf['update_str_type']]}_k{conf['av_degree']}_new.png"
+    plt.savefig(plot_name)
     plt.show()
     plt.close()
 

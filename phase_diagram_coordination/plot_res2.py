@@ -38,8 +38,8 @@ for T in T_list:
 
     for S in S_list:
         try:
-            config = dict(config_values, update_str_type=const.UNCOND_IMITATION, T=T, S=S, av_degree=999)
-            res, _ = read_stationary_generic(config, directory=f'imit_new_res999')
+            config = dict(config_values, update_str_type=const.UNCOND_IMITATION, T=T, S=S, av_degree=8)
+            res, _ = read_stationary_generic(config, directory=f'imit_new_res8')
             alpha = np.mean(res['left_fraction'])
             coop_mean_s.append(alpha)
             coop_std_s.append(np.std(res['left_fraction']))

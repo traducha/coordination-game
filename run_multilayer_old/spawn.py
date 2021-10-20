@@ -11,21 +11,19 @@ if __name__ == '__main__':
     py_path = '/home/tomasz/anaconda2/envs/conda_python3.6/bin/python3'
 
     ###########################################
-    script = 'run_over_b_new.py'
+    script = 'run_over_nov5.py'
     ###########################################
-    update_str_type = const.UNCOND_IMITATION
+    results_dir = "res_best_b_wider"
     ###########################################
-    results_dir = "imit_res_b_k8_new"
+    update_str_type = const.BEST_RESPONSE
     ###########################################
-    b_list = np.linspace(-11, 11, 50)  # np.linspace(0.9, 2, 15)  # np.linspace(-9, 11, 100)
-    ###########################################
-    av_degree = 8
+    node_overlap_list = np.linspace(0, 1, 30)
     ###########################################
 
     os.makedirs(results_dir, exist_ok=True)
 
-    for i, b in enumerate(b_list):
-        out_file = f'{results_dir}/out_b{b}.txt'
-        er_file = f'{results_dir}/error_b{b}.txt'
-        command = f'run -t 01:00 -o {out_file} -e {er_file} {py_path} {script} {b} {results_dir} {av_degree} {update_str_type}'
+    for i, node_overlap in enumerate(node_overlap_list):
+        out_file = f'{results_dir}/out_nov{node_overlap}.txt'
+        er_file = f'{results_dir}/error_nov{node_overlap}.txt'
+        command = f'run -o {out_file} -e {er_file} {py_path} {script} {node_overlap} {update_str_type} {results_dir}'
         os.system(command)

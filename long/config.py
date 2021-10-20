@@ -3,11 +3,11 @@ import constants as const
 
 config_values = {
     "num_nodes": 1000,
-    "av_degree": None,
-    "payoff_type": const.COMPLEX,
+    "av_degree": 8,
+    "payoff_type": const.GENERIC,
     "b": None,  # necessary for the complex payoff matrix
-    "R": None,  # parameters for the general payoff matrix
-    "P": None,
+    "R": 1,  # parameters for the general payoff matrix
+    "P": 0,
     "S": None,
     "T": None,
     "update_str_type": None,
@@ -15,6 +15,5 @@ config_values = {
     "loop_length": 10000,
     "number_of_loops": 100,
     "check_frozen": True,
-    "sample_size": 20,
-    "multilayer": None
+    "sample_size": 100,
 }

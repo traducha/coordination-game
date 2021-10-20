@@ -39,15 +39,15 @@ NAMES2 = {
 }
 
 
-def plot_res(str_type=const.REPLICATOR, N=1000, res_dir='res_repl_n1000'):
+def plot_res(str_type=const.UNCOND_IMITATION, N=1000, res_dir='res_imit_n1000'):
     fig = plt.figure(figsize=(5, 4.8))
     axs = fig.subplots(3, 3)
     # axs = list(axs[0]) + list(axs[1]) + list(axs[2])
 
     # RD and BR
-    k_list = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+    # k_list = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
     # UI
-    # k_list = [[2, 4, 5], [6, 8, 9], [10, 11, 15]]
+    k_list = [[2, 4, 5], [6, 8, 9], [10, 11, 15]]
 
     for i, ax_col in enumerate(axs):
         for j, ax in enumerate(ax_col):
@@ -57,7 +57,7 @@ def plot_res(str_type=const.REPLICATOR, N=1000, res_dir='res_repl_n1000'):
             except Exception:
                 print('ERROR? WHY?')  # it's if the simulation didn't finish yet
 
-            ax.text(0.15, 0.8, f'k={k_list[i][j]}', transform=ax.transAxes)
+            ax.text(0.11, 0.8, f'k={k_list[i][j]}', transform=ax.transAxes, fontsize=11)
             ax.hist(res['left_fraction'], bins=np.linspace(0.0, 1.0, 22), range=(0, 1), density=True, color='tomato', alpha=0.9)
 
             try:
@@ -70,16 +70,12 @@ def plot_res(str_type=const.REPLICATOR, N=1000, res_dir='res_repl_n1000'):
 
             ax.set_xlim([0, 1])
             ax.set_ylim([0, 12])
-            if i == 0:
-                if j == 0:
-                    ax.set_ylim([0, 12])
-                if j in [1, 2]:
-                    ax.set_ylim([0, 12])
-            # if i == 1:
-            #     ax.set_ylim([0, 5])
-            # if i == 2:
-            #     if j == 2:
-            #         ax.set_ylim([0, 5])
+            if i in [0, 1]:
+                ax.set_xticklabels([])
+            else:
+                ax.set_xticklabels(['0', '0.5', '1'])
+            if j in [2, 1]:
+                ax.set_yticklabels([])
             if i == 2:
                 ax.set_xlabel(r'$\alpha$')
             if j == 0:
@@ -88,10 +84,11 @@ def plot_res(str_type=const.REPLICATOR, N=1000, res_dir='res_repl_n1000'):
     axs[0][1].set_title(f"{NAMES[conf['update_str_type']]}")
     axs[0][0].set_title(f"{NAMES15[conf['update_str_type']]}", loc='left', fontweight='bold')
     fig.tight_layout()
-    plt.gcf().subplots_adjust(top=0.92, bottom=0.1, right=0.97, left=0.10)
+    # plt.gcf().subplots_adjust(top=0.92, bottom=0.1, right=0.97, left=0.10)
+    plt.subplots_adjust(wspace=0.1, hspace=0.1, top=0.92, bottom=0.1, right=0.97, left=0.10)
     # fig.subplots_adjust(top=0.99)
 
-    plot_name = f"simple_{NAMES2[conf['update_str_type']]}_N{conf['num_nodes']}_hist.png"
+    plot_name = f"simple_{NAMES2[conf['update_str_type']]}_N{conf['num_nodes']}_hist.pdf"
     plt.savefig(plot_name)
     plt.show()
     plt.close()

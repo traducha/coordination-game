@@ -66,7 +66,7 @@ def plot_res(str_type=const.UNCOND_IMITATION, av_degree=8, res_dir='res_b8_new')
     ################################################################################
     ################################################################################
 
-    plt.plot(s_list, active, label=r'$\rho$', color=const.REDISH, alpha=0.8)
+    # plt.plot(s_list, active, label=r'$\rho$', color=const.REDISH, alpha=0.8)
 
     plt.plot(s_list, er_coop, linestyle='--', color='black', alpha=0.6)
 
@@ -76,7 +76,7 @@ def plot_res(str_type=const.UNCOND_IMITATION, av_degree=8, res_dir='res_b8_new')
         Line2D([0], [0], marker='o', color=const.ORANGE, markerfacecolor='none', markeredgecolor=const.GREEN, lw=1.3,
                label=r'$\alpha$'),
         Line2D([0], [0], color='black', alpha=0.6, lw=1.3, linestyle='--', label=r'$\alpha_{ER}$'),
-        Line2D([0], [0], color=const.REDISH, alpha=0.6, lw=1.3, label=r'$\rho$'),
+        #Line2D([0], [0], color=const.REDISH, alpha=0.6, lw=1.3, label=r'$\rho$'),
     ]
     plt.legend(loc=2, handles=legend_elements)
     plt.xlabel(r'$S$')
@@ -130,7 +130,7 @@ def plot_res(str_type=const.UNCOND_IMITATION, av_degree=8, res_dir='res_b8_new')
 
     plt.tight_layout()
 
-    plot_name = f"imit_S_b_a.png"
+    plot_name = f"imit_S_b_a.pdf"
     plt.savefig(plot_name)
     plt.show()
     plt.close()

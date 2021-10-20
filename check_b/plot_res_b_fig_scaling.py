@@ -106,7 +106,7 @@ def plot_res():
 
     plt.tight_layout()
 
-    plot_name = f"imit_S_b_scaling.png"
+    plot_name = f"imit_S_b_scaling.pdf"
     plt.savefig(plot_name)
     plt.show()
     plt.close()

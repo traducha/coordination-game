@@ -26,15 +26,16 @@ def plot():
     plt.axhline(0, linestyle='-', color='black', linewidth=0.8)
     plt.axvline(0, linestyle='-', color='black', linewidth=0.8)
 
-    x = np.linspace(-3.5, 2.5, 30)
-    plt.plot(x, linear(x, 1, 0), linestyle='--', linewidth=0.6)
+    # x = np.linspace(-3.5, 2.5, 30)
+    # plt.plot(x, linear(x, 1, 0), linestyle='--', linewidth=0.6)
     x = np.linspace(-4.5, 0, 30)
     plt.plot(x, linear(x, 1, 1), color=const.REDISH)
     x = np.linspace(-4.5, -1, 30)
     plt.plot(x, linear(x, 0, -1), color=const.VIOLET, alpha=0.8)
     plt.scatter(-2, -1, marker="o")
 
-    plt.fill_between([-1000000000, 0], -3.5, [-3.5, 1], color=const.GREEN, alpha=0.35)
+    plt.fill_between([-3.5, 0], -3.5, [-2.5, 1], color=const.GREEN, alpha=0.35)
+    plt.fill_between([-3.5, 0], 1, [-2.5, 1], color=const.GREEN, alpha=0.35)
 
     plt.xlim([-3.5, 0.5])
     plt.xticks(np.arange(-3, 1, step=1))
@@ -64,7 +65,7 @@ def plot():
     plt.ylabel(r"$T$", fontsize=11)
     plt.tight_layout()
 
-    plt.savefig("plots/diagram.png")
+    plt.savefig("plots/diagram.pdf")
     plt.show()
     plt.close()
 

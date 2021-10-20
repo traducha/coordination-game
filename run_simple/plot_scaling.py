@@ -36,8 +36,8 @@ NAMES2 = {
 }
 
 
-def plot_res(str_type=const.REPLICATOR, N_list=(1000, 2000, 4000),
-             res_dir='res_repl_n'):
+def plot_res(str_type=const.BEST_RESPONSE, N_list=(1000, 2000, 4000),
+             res_dir='res_best_n'):
 
     fig = plt.figure(figsize=(4, 3))
     plt.axhline(0.5, linestyle='--', color='#bbbbbb')
@@ -88,7 +88,7 @@ def plot_res(str_type=const.REPLICATOR, N_list=(1000, 2000, 4000),
     ax2.patch.set_alpha(0.4)
     ax2.tick_params(axis='both', which='major', labelsize=8)
     ax2.set_xlim([0, 30])
-    # ax2.set_ylim([0, 50])
+    ax2.set_ylim([0, 50])
     ax2.set_xlabel(r'$k$')
     ax2.set_ylabel(r'$\tau$')
     for i, N in enumerate(N_list):
@@ -96,7 +96,7 @@ def plot_res(str_type=const.REPLICATOR, N_list=(1000, 2000, 4000),
 
     plt.tight_layout()
 
-    plot_name = f"simple_{NAMES2[conf['update_str_type']]}_scaling.png"
+    plot_name = f"simple_{NAMES2[conf['update_str_type']]}_scaling.pdf"
     plt.savefig(plot_name)
     plt.show()
     plt.close()
