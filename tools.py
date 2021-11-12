@@ -58,17 +58,33 @@ def config_into_suffix(conf):
 
 def payoff_matrix(_type, b=None, R=None, P=None, T=None, S=None):
     # pay_off[mine][co-player]
-    if _type == const.COMPLEX:
-        if b is None:
-            raise ValueError('The parameter b must be provided for the complex payoff matrix.')
-        return {const.LEFT: {const.LEFT: 1, const.RIGHT: 0}, const.RIGHT: {const.LEFT: -b, const.RIGHT: 2}}, 2 + b
-    elif _type == const.SIMPLE:
-        return {const.LEFT: {const.LEFT: 1, const.RIGHT: 0}, const.RIGHT: {const.LEFT: 0, const.RIGHT: 1}}, 1
-    elif _type == const.GENERIC:
+    if _type == const.GENERIC:
         if R is None or P is None or T is None or S is None:
             raise ValueError('The parameters R, P, T, and S must be provided for the generic payoff matrix.')
-        return {const.LEFT: {const.LEFT: R, const.RIGHT: S}, const.RIGHT: {const.LEFT: T, const.RIGHT: P}},\
+        return {const.LEFT: {const.LEFT: R, const.RIGHT: S}, const.RIGHT: {const.LEFT: T, const.RIGHT: P}}, \
                max([R, P, T, S]) - min([R, P, T, S])
+    elif _type == const.COMPLEX:
+        if b is None:
+            raise ValueError('The parameter b must be provided for the complex payoff matrix.')
+        return {const.LEFT: {const.LEFT: 1, const.RIGHT: 0}, const.RIGHT: {const.LEFT: -b, const.RIGHT: 2}}, \
+               max([-b, 2]) - min([-b, 0])
+    elif _type == const.SIMPLE:
+        return {const.LEFT: {const.LEFT: 1, const.RIGHT: 0}, const.RIGHT: {const.LEFT: 0, const.RIGHT: 1}}, 1
+    else:
+        raise ValueError(f'Unrecognized matrix type: {_type}')
+
+
+def get_max_min_payoff(_type, b=None, R=None, P=None, T=None, S=None):
+    if _type == const.GENERIC:
+        if R is None or P is None or T is None or S is None:
+            raise ValueError('The parameters R, P, T, and S must be provided for the generic payoff matrix.')
+        return max([R, P, T, S]), min([R, P, T, S])
+    elif _type == const.COMPLEX:
+        if b is None:
+            raise ValueError('The parameter b must be provided for the complex payoff matrix.')
+        return max([-b, 2]), min([-b, 0])
+    elif _type == const.SIMPLE:
+        return 1, 0
     else:
         raise ValueError(f'Unrecognized matrix type: {_type}')
 

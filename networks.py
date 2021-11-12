@@ -7,7 +7,7 @@ import igraph as ig
 from datetime import datetime
 
 import constants as const
-from tools import run_with_time, payoff_matrix
+from tools import run_with_time, payoff_matrix, get_max_min_payoff
 
 
 ###################################
@@ -149,20 +149,25 @@ class MultiNetCoordination(MultiNet):
             raise ValueError(f"layers_config (len={len(layers_config)}) must contain a configuration"
                              f"for each layer (layers={len(self.layers)})!")
 
+        min_payoff = float('inf')
+        max_payoff = float('-inf')
         for i in range(self.num_layers):
             self.get_layer(i).vs()['last_payoff'] = None  # to raise an error if it's not updated
-
             conf = layers_config[i]
-            payoff_dict, payoff_norm = payoff_matrix(payoff_type, b=conf['b'], R=conf['R'], P=conf['P'], T=conf['T'],
-                                                     S=conf['S'])
+
+            # set configuration payoff dicts of leyers
+            payoff_dict, _ = payoff_matrix(payoff_type, b=conf['b'], R=conf['R'], P=conf['P'], T=conf['T'], S=conf['S'])
             self.payoff_dicts = self.payoff_dicts + (payoff_dict,)
-            self.payoff_norms = self.payoff_norms + (payoff_norm,)
 
             self.get_layer(i)['index_number'] = i
             self.get_layer(i)['payoff_dict'] = payoff_dict
-            self.get_layer(i)['payoff_norm'] = payoff_norm
             self.get_layer(i)['layer_config'] = conf
 
+            _max, _min = get_max_min_payoff(payoff_type, b=conf['b'], R=conf['R'], P=conf['P'], T=conf['T'], S=conf['S'])
+            max_payoff = max([max_payoff, _max])
+            min_payoff = min([min_payoff, _min])
+
+            # select initial strategy of individual (not shared) nodes
             for node_idx in self.individual_nodes:
                 self.get_layer(i).vs(node_idx)['shared'] = False
                 if np.random.random() < left_prob:
@@ -172,6 +177,15 @@ class MultiNetCoordination(MultiNet):
                     self.get_layer(i).vs(node_idx)['strategy'] = const.RIGHT
                     self.get_layer(i).vs(node_idx)['color'] = const.BLUE
 
+        # payoff norm is used in replicator dynamics and must be the same for each layer in order to
+        # keep the probability of copying in [0,1] range, since nodes that obtained their payoff
+        # on different layers can interact with each other
+        for i in range(self.num_layers):
+            payoff_norm = max_payoff - min_payoff
+            self.payoff_norms = self.payoff_norms + (payoff_norm,)
+            self.get_layer(i)['payoff_norm'] = payoff_norm
+
+        # select initial strategy of shared nodes
         for node_idx in self.shared_nodes:
             if np.random.random() < left_prob:
                 self.update_node(node_idx, 0, trait_name='shared', trait_value=True)

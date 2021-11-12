@@ -219,7 +219,7 @@ def initialize_payoff_multi(network, num_nodes):
     return network
 
 
-def main_loop_async_multi(network, num_nodes, time_steps, update_func):
+def main_loop_async_multi(network, num_nodes, time_steps, update_func=None, update_str_type=None):
     last_update = None
 
     for time_step in range(time_steps):
@@ -250,7 +250,7 @@ def main_loop_async_multi(network, num_nodes, time_steps, update_func):
     return last_update
 
 
-def main_loop_async_multi_complete(network, num_nodes, time_steps, update_func):
+def main_loop_async_multi_complete(network, num_nodes, time_steps, update_func=None, update_str_type=None):
     last_update = None
 
     for time_step in range(time_steps):
@@ -258,20 +258,51 @@ def main_loop_async_multi_complete(network, num_nodes, time_steps, update_func):
         graph = network.get_layer(layer_index)
 
         active_node = np.random.randint(0, num_nodes)
-        neighbors = graph.neighbors(active_node)
 
         active_strategy = graph.vs(active_node)['strategy'][0]
+        not_active_strategy = const.RIGHT if active_strategy == const.LEFT else const.LEFT
         active_payoff = 0
-        neig_list = []  # [(id, strategy, payoff), ...]
+        not_active_payoff = 0
+        max_neig_payoff = float('-inf')
+        max_neig_strategy = None
 
         # compute the payoff playing with neighbors
-        for neig in neighbors:
-            neig_list.append((neig, graph.vs(neig)['strategy'][0], graph.vs(neig)['last_payoff'][0]))
-            active_payoff += graph['payoff_dict'][active_strategy][graph.vs(neig)['strategy'][0]]
+        for neig in range(num_nodes):
+            if neig != active_node:
+                neig_vertex = graph.vs(neig)
+                active_payoff += graph['payoff_dict'][active_strategy][neig_vertex['strategy'][0]]
+                not_active_payoff += graph['payoff_dict'][not_active_strategy][neig_vertex['strategy'][0]]
+                if neig_vertex['last_payoff'][0] > max_neig_payoff:
+                    max_neig_payoff = neig_vertex['last_payoff'][0]
+                    max_neig_strategy = neig_vertex['strategy'][0]
+
+        # select new strategy
+        if update_str_type == const.BEST_RESPONSE:
+            if active_payoff == not_active_payoff:
+                new_strategy = np.random.choice([active_strategy, not_active_strategy])
+            elif active_payoff > not_active_payoff:
+                new_strategy = active_strategy
+            else:
+                new_strategy = not_active_strategy
+        elif update_str_type == const.UNCOND_IMITATION:
+            if max_neig_payoff > active_payoff:
+                new_strategy = max_neig_strategy
+            else:
+                new_strategy = active_strategy
+        elif update_str_type == const.REPLICATOR:
+            neig_id = np.random.randint(0, num_nodes)
+            while neig_id == active_node:
+                neig_id = np.random.randint(0, num_nodes)
+
+            prob = (graph.vs(neig_id)['last_payoff'][0] - active_payoff) / ((num_nodes - 1) * graph['payoff_norm'])
+            if prob > 0 and np.random.random() < prob:
+                new_strategy = graph.vs(neig_id)['strategy'][0]
+            else:
+                new_strategy = active_strategy
+        else:
+            raise ValueError("ups, this shouldn't happen")
 
         # update the strategy
-        new_strategy = update_func(active_payoff, active_strategy, neig_list, graph['payoff_dict'], graph['payoff_norm'])
-
         network.update_node(active_node, layer_index, trait_name='strategy', trait_value=new_strategy)
         network.update_node(active_node, layer_index, trait_name='last_payoff', trait_value=active_payoff)
 
@@ -389,7 +420,7 @@ def run_trajectory(num_nodes=None, av_degree=None, loop_length=None, number_of_l
                 for g in net.layers:
                     last_update_time = main_loop_synchronous(g, num_nodes, 1, update_func, no_update=True)
                     if last_update_time == 0:
-                        last_update_time = 1  # TODO check if works now
+                        last_update_time = 1
                     updated = updated or last_update_time
             else:
                 updated = main_loop_synchronous(net, num_nodes, 1, update_func, no_update=True)
@@ -433,7 +464,7 @@ def get_stationary_state(num_nodes=None, av_degree=None, loop_length=None, numbe
 
 
 def get_stationary_state_multi(num_nodes=None, av_degree=None, loop_length=None, number_of_loops=None, loop_type=None,
-                         payoff_type=None, update_str_type=None, check_frozen=False, multilayer=None, **kwargs):
+                               payoff_type=None, update_str_type=None, check_frozen=False, multilayer=None, **kwargs):
     if multilayer is None:
         raise ValueError('Configuration of layers is missing!')
 
@@ -443,15 +474,18 @@ def get_stationary_state_multi(num_nodes=None, av_degree=None, loop_length=None,
                                rewire_first_layer=multilayer['rewire_first_layer'])
     net = initialize_payoff_multi(net, num_nodes)
 
-    main_loop, time_norm = get_loop_function(loop_type, True, num_nodes)
+    if av_degree == num_nodes - 1:
+        main_loop = main_loop_async_multi_complete
+    else:
+        main_loop = main_loop_async_multi
     update_func = update_strategy(update_str_type)
 
     convergence_t = 0
 
     for i in range(number_of_loops):
-        last_update_time = main_loop(net, num_nodes, loop_length, update_func)
+        last_update_time = main_loop(net, num_nodes, loop_length, update_func=update_func, update_str_type=update_str_type)
         if last_update_time is not None:
-            convergence_t = ((i * loop_length) + last_update_time) / time_norm
+            convergence_t = ((i * loop_length) + last_update_time) / num_nodes
 
         if check_frozen:
             updated = None

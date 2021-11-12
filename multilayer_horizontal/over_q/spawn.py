@@ -25,7 +25,7 @@ if __name__ == '__main__':
     node_overlap_list = np.linspace(0, 1, 30)
     ###########################################
 
-    results_dir = f"res_{rules[update_str_type]}_k{k}_gap{S1-S2}"
+    results_dir = f"res/res_{rules[update_str_type]}_k{k}_gap{S1-S2}"
     os.makedirs(results_dir, exist_ok=True)
 
     for i, node_overlap in enumerate(node_overlap_list):
