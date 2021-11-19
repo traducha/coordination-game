@@ -14,7 +14,7 @@ if __name__ == '__main__':
     script = f'run.py'
 
     ###########################################
-    update_str_type = const.BEST_RESPONSE
+    update_str_type = const.REPLICATOR
     ###########################################
     k = 8
     ###########################################
