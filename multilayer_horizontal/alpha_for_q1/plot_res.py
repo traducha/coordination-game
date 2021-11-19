@@ -6,6 +6,7 @@ import numpy as np
 import json
 import time
 import os
+from random import random
 
 import constants as const
 
@@ -74,7 +75,8 @@ def plot_res(str_type=None, av_degree=None):
 
         for j in range(conf['sample_size']):
             for i, value in enumerate(res['left_fraction'][j]):
-                plt.plot(ds, value, marker='o', markerfacecolor='none', alpha=0.05, color=COLORS[i])
+                if random() < 0.01:
+                    plt.plot(ds, value, marker='o', markerfacecolor='none', alpha=0.05, color=COLORS[i])
 
     for i, value in enumerate(zip(*coop)):
         plt.plot(delta_s, value, color=COLORS2[i])
@@ -90,7 +92,7 @@ def plot_res(str_type=None, av_degree=None):
     plt.xlabel(r'$\Delta S$')
     plt.ylabel(r'$\alpha$')
     plt.title(f"{names[conf['update_str_type']]}, N={conf['num_nodes']}, k={conf['av_degree']}, q=1")
-    # plt.ylim([-0.05, 1.05])
+    plt.ylim([-0.04, 1.04])
 
     left, bottom, width, height = [0.7, 0.32, 0.15, 0.12]
     ax2 = fig.add_axes([left, bottom, width, height])

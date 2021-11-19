@@ -14,16 +14,16 @@ if __name__ == '__main__':
     script = f'run.py'
 
     ###########################################
-    update_str_type = const.REPLICATOR
+    update_str_type = const.BEST_RESPONSE
     ###########################################
     k = 8
     ###########################################
     T1 = -1
-    S1_list = np.linspace(-1.95, -1, 20)
+    S1_list = np.linspace(-0.95, 0.0, 20)
     T2 = -1
-    S2_list = np.linspace(-2.05, -3, 20)
+    S2_list = np.linspace(-3.05, -4.0, 20)
     ###########################################
-    node_overlap = 1
+    node_overlap = 1.0
     ###########################################
 
     for S1, S2 in zip(S1_list, S2_list):
