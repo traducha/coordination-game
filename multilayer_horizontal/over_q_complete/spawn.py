@@ -50,5 +50,5 @@ if __name__ == '__main__':
             else:
                 out_file = f'{results_dir}/out_nov{node_overlap}.txt'
                 er_file = f'{results_dir}/error_nov{node_overlap}.txt'
-                command = f'run -t 36:00 -o {out_file} -e {er_file} {py_path} {script} {node_overlap} {update_str_type} {results_dir} {T1} {S1} {T2} {S2} {k}'
+                command = f'run -t 28:00 -o {out_file} -e {er_file} {py_path} {script} {node_overlap} {update_str_type} {results_dir} {T1} {S1} {T2} {S2} {k}'
                 os.system(command)
