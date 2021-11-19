@@ -69,19 +69,20 @@ def plot_res(str_type=None, av_degree=None, res_dir=''):
     plt.axvline(q_c, ymin=-0.5, ymax=0.03, color=const.REDISH)
 
     # fitting
-    popt, pcov = curve_fit(func, node_overlap_list, d_alpha, p0=(-10, 0, -1, 10, 1))
-    print(popt)
-    plt.plot(np.linspace(0, 1, 100), func(np.linspace(0, 1, 100), *popt), color='#777777', linestyle='--')
-    q_c_fit = next((x for x in np.linspace(0, 1, 1000) if func(x, *popt) < 0.01), None)
-    plt.axvline(q_c_fit, ymin=-0.5, ymax=0.03, color=const.BLUE)
+    # popt, pcov = curve_fit(func, node_overlap_list, d_alpha, p0=(-10, 0, -1, 10, 1))
+    # print(popt)
+    # plt.plot(np.linspace(0, 1, 100), func(np.linspace(0, 1, 100), *popt), color='#777777', linestyle='--')
+    # q_c_fit = next((x for x in np.linspace(0, 1, 1000) if func(x, *popt) < 0.01), None)
+    # plt.axvline(q_c_fit, ymin=-0.5, ymax=0.03, color=const.BLUE)
+    q_c_fit = None
 
     plt.text(0.78, 0.07, r"$\alpha_{q=1}= $ " + f"{round(coop[-1][0], 2)}", fontsize=9)
-    if str_type == const.REPLICATOR:
-        plt.text(q_c + 0.025, 0.15, f'$q_c=$ {round(q_c, 2)}', fontsize=9)
-        plt.text(q_c + 0.025, 0.05, r'$q_c^{fit}=$ ' + f'{round(q_c_fit, 2)}', fontsize=9)
-    elif str_type == const.BEST_RESPONSE:
-        plt.text(-0.04, 0.52, f'$q_c=$ {round(q_c, 2)}', fontsize=9)
-        plt.text(-0.04, 0.42, r'$q_c^{fit}=$ ' + f'{round(q_c_fit, 2)}', fontsize=9)
+    # if str_type == const.REPLICATOR:
+    #     plt.text(q_c + 0.025, 0.15, f'$q_c=$ {round(q_c, 2)}', fontsize=9)
+    #     plt.text(q_c + 0.025, 0.05, r'$q_c^{fit}=$ ' + f'{round(q_c_fit, 2)}', fontsize=9)
+    # elif str_type == const.BEST_RESPONSE:
+    #     plt.text(-0.04, 0.52, f'$q_c=$ {round(q_c, 2)}', fontsize=9)
+    #     plt.text(-0.04, 0.42, r'$q_c^{fit}=$ ' + f'{round(q_c_fit, 2)}', fontsize=9)
 
     for i, value in enumerate(zip(*active)):
         plt.plot(node_overlap_list, value, label=f'L{i}' + r' $\rho$', color=COLORS3[i], alpha=0.5)
@@ -117,8 +118,8 @@ def plot_res(str_type=None, av_degree=None, res_dir=''):
 
 
 if __name__ == '__main__':
-    str_type = const.REPLICATOR
-    k = 8
+    str_type = const.BEST_RESPONSE
+    k = 499
     gap = None
 
     ds_list = []
@@ -128,11 +129,14 @@ if __name__ == '__main__':
         directory = 'res/' + directory
         if os.path.isdir(directory) and f'res/res_{rules_dicts[str_type]}_k{k}' in directory:
             if gap is None or f'_gap{gap}' in directory:
-                print(directory)
-                ds, q_c, q_c_fit = plot_res(str_type=str_type, av_degree=k, res_dir=directory)
-                ds_list.append(ds)
-                q_c_list.append(q_c)
-                q_c_fit_list.append(q_c_fit)
+                try:
+                    print(directory)
+                    ds, q_c, q_c_fit = plot_res(str_type=str_type, av_degree=k, res_dir=directory)
+                    ds_list.append(ds)
+                    q_c_list.append(q_c)
+                    q_c_fit_list.append(q_c_fit)
+                except Exception as e:
+                    print(e)
 
     print('ds_list =', ds_list)
     print('q_c_list =', q_c_list)

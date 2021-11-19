@@ -110,7 +110,7 @@ def plot_res(str_type=None, av_degree=None, res_dir=''):
 
 
 if __name__ == '__main__':
-    str_type = const.BEST_RESPONSE
+    str_type = const.REPLICATOR
     k = 8
 
     ds_list = []
