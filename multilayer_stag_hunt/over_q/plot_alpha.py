@@ -31,10 +31,10 @@ def plot_res(str_type=None, av_degree=None):
     fig = plt.figure(figsize=(4, 3))
 
     ###########################################
-    T1 = -1
-    S1_list = np.linspace(-1.95, 0, 40)
-    T2 = -1
-    S2_list = np.linspace(-2.05, -4, 40)
+    # T1 = -1
+    # S1_list = np.linspace(-1.95, 0, 40)
+    # T2 = -1
+    # S2_list = np.linspace(-2.05, -4, 40)
     ###########################################
 
     conv_time = []
@@ -44,9 +44,11 @@ def plot_res(str_type=None, av_degree=None):
     coop = []
     coop_std = []
     delta_s = []
-    for S1, S2 in zip(S1_list, S2_list):
-        S1 = round(S1, 2)
-        S2 = round(S2, 2)
+    for T1 in np.linspace(0, 0.45, 10):
+        T1 = round(T1, 2)
+        S1 = -T1
+        T2 = 1 - T1
+        S2 = -T2
         ds = round(S1 - S2, 2)
         delta_s.append(ds)
         try:
@@ -62,10 +64,9 @@ def plot_res(str_type=None, av_degree=None):
             res_dir = f"res/res_{rules[update_str_type]}_k{k}_gap{ds}"
             res, conf = read_stationary_generic(conf, directory=res_dir)
         except Exception as e:
-            conf = dict(config_values, multilayer=multi_conf, update_str_type=update_str_type, av_degree=k, sample_size=2001)
             res_dir = f"res/res_{rules[update_str_type]}_k{k}_gap{ds}"
             res, conf = read_stationary_generic(conf, directory=res_dir)
-            # print('ERROR? WHY?')  # it's if the simulation didn't finish yet
+            print('ERROR? WHY?')  # it's if the simulation didn't finish yet
 
 
         coop.append([np.mean(value) for value in zip(*res['left_fraction'])])
@@ -77,7 +78,7 @@ def plot_res(str_type=None, av_degree=None):
 
         for j in range(conf['sample_size']):
             for i, value in enumerate(res['left_fraction'][j]):
-                if random() < 0.01:
+                if random() < 1:
                     plt.plot(ds, value, marker='o', markerfacecolor='none', alpha=0.05, color=COLORS[i])
 
     for i, value in enumerate(zip(*coop)):
@@ -91,7 +92,7 @@ def plot_res(str_type=None, av_degree=None):
     # for i, value in enumerate(zip(*active)):
     #     plt.plot(delta_s, value, label=f'L{i}' + r' $\rho$', color=COLORS3[i], alpha=0.5)
 
-    plt.xlabel(r'$\Delta S$')
+    plt.xlabel(r'$\Delta S (= \Delta T)$')
     plt.ylabel(r'$\alpha$')
     plt.title(f"{names[conf['update_str_type']]}, N={conf['num_nodes']}, k={conf['av_degree']}, q=1")
     plt.ylim([-0.04, 1.04])
@@ -106,7 +107,7 @@ def plot_res(str_type=None, av_degree=None):
     # plt.gcf().subplots_adjust(top=1, bottom=0.8, right=1, left=0.09)
     plt.tight_layout()
 
-    plot_name = f"plots/{res_dir[4:].split('gap')[0]}.png"
+    plot_name = f"plots/alpha_{res_dir[4:].split('gap')[0]}.png"
     plt.savefig(plot_name)
     plt.show()
     plt.close()

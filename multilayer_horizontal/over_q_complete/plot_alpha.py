@@ -32,9 +32,9 @@ def plot_res(str_type=None, av_degree=None):
 
     ###########################################
     T1 = -1
-    S1_list = np.linspace(-1.95, 0, 40)
+    S1_list = np.linspace(-2, 0, 11)[1:]
     T2 = -1
-    S2_list = np.linspace(-2.05, -4, 40)
+    S2_list = -4.0 - S1_list
     ###########################################
 
     conv_time = []
@@ -77,7 +77,7 @@ def plot_res(str_type=None, av_degree=None):
 
         for j in range(conf['sample_size']):
             for i, value in enumerate(res['left_fraction'][j]):
-                if random() < 0.01:
+                if random() < 1:
                     plt.plot(ds, value, marker='o', markerfacecolor='none', alpha=0.05, color=COLORS[i])
 
     for i, value in enumerate(zip(*coop)):
@@ -106,7 +106,7 @@ def plot_res(str_type=None, av_degree=None):
     # plt.gcf().subplots_adjust(top=1, bottom=0.8, right=1, left=0.09)
     plt.tight_layout()
 
-    plot_name = f"plots/{res_dir[4:].split('gap')[0]}.png"
+    plot_name = f"plots/alpha_{res_dir[4:].split('gap')[0]}.png"
     plt.savefig(plot_name)
     plt.show()
     plt.close()
@@ -114,8 +114,8 @@ def plot_res(str_type=None, av_degree=None):
 
 
 if __name__ == '__main__':
-    update_str_type = const.BEST_RESPONSE
-    k = 8
+    update_str_type = const.REPLICATOR
+    k = 499
     plot_res(str_type=update_str_type, av_degree=k)
 
 

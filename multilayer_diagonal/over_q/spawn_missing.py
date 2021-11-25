@@ -14,9 +14,9 @@ if __name__ == '__main__':
     script = f'run_over_nov.py'
 
     ###########################################
-    update_str_type = const.UNCOND_IMITATION
+    update_str_type = const.REPLICATOR
     ###########################################
-    k = 499
+    k = 8
     ###########################################
     # T1 = -1
     # S1 = -2
@@ -26,13 +26,13 @@ if __name__ == '__main__':
     node_overlap_list = np.linspace(0, 1, 30)
     ###########################################
 
-    for T1 in np.linspace(0, 0.45, 10):
+    for T1 in np.linspace(-1, -3, 11)[1:]:
         T1 = round(T1, 2)
-        S1 = -T1
-        T2 = 1 - T1
-        S2 = -T2
+        T2 = round(-2.0 - T1, 2)
+        S1 = round(-T1 - 3.0, 2)
+        S2 = round(-T2 - 3.0, 2)
 
-        results_dir = f"res/res_{rules[update_str_type]}_k{k}_gap{round(S1-S2, 2)}"
+        results_dir = f"res/res_{rules[update_str_type]}_k{k}_gap{round(T2-T1, 2)}"
         os.makedirs(results_dir, exist_ok=True)
 
         for i, node_overlap in enumerate(node_overlap_list):
@@ -52,5 +52,5 @@ if __name__ == '__main__':
             else:
                 out_file = f'{results_dir}/out_nov{node_overlap}.txt'
                 er_file = f'{results_dir}/error_nov{node_overlap}.txt'
-                command = f'run -t 52:00 -o {out_file} -e {er_file} {py_path} {script} {node_overlap} {update_str_type} {results_dir} {T1} {S1} {T2} {S2} {k}'
+                command = f'run -t 10:00 -o {out_file} -e {er_file} {py_path} {script} {node_overlap} {update_str_type} {results_dir} {T1} {S1} {T2} {S2} {k}'
                 os.system(command)

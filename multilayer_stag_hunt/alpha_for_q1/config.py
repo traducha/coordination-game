@@ -2,7 +2,7 @@
 import constants as const
 
 config_values = {
-    "num_nodes": 1000,
+    "num_nodes": 500,
     "av_degree": None,
     "payoff_type": const.GENERIC,
     "b": None,  # necessary for the complex payoff matrix
@@ -12,10 +12,10 @@ config_values = {
     "T": None,
     "update_str_type": None,
     "loop_type": const.ASYNC,
-    "loop_length": 100000,
+    "loop_length": 50000,
     "number_of_loops": 10,
     "check_frozen": True,
-    "sample_size": 2000,
+    "sample_size": 1000,
     "multilayer":
         {
             "num_layers": 2,

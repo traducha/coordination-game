@@ -74,7 +74,6 @@ def plot_res(str_type=None, av_degree=None, res_dir=''):
     plt.plot(np.linspace(0, 1, 100), func(np.linspace(0, 1, 100), *popt), color='#777777', linestyle='--')
     q_c_fit = next((x for x in np.linspace(0, 1, 1000) if func(x, *popt) < 0.01), None)
     plt.axvline(q_c_fit, ymin=-0.5, ymax=0.03, color=const.BLUE)
-    # q_c_fit = None
 
     plt.text(0.78, 0.07, r"$\alpha_{q=1}= $ " + f"{round(coop[-1][0], 2)}", fontsize=9)
     if str_type == const.REPLICATOR:
@@ -91,7 +90,7 @@ def plot_res(str_type=None, av_degree=None, res_dir=''):
     plt.legend(loc=5)
     plt.xlabel(r'$q$')
     ds = round(float(res_dir.split('gap')[1]), 1)
-    plt.title(f"{names[conf['update_str_type']]}, N={conf['num_nodes']}, k={conf['av_degree']}, $\Delta$S={ds}")
+    plt.title(f"{names[conf['update_str_type']]}, N={conf['num_nodes']}, k={conf['av_degree']}, $\Delta$T={ds}")
     plt.ylim([-0.05, 1.05])
 
     left, bottom, width, height = [0.57, 0.5, 0.15, 0.12]
@@ -118,8 +117,8 @@ def plot_res(str_type=None, av_degree=None, res_dir=''):
 
 
 if __name__ == '__main__':
-    str_type = const.REPLICATOR
-    k = 499
+    str_type = const.BEST_RESPONSE
+    k = 8
     gap = None
 
     ds_list = []
@@ -129,14 +128,11 @@ if __name__ == '__main__':
         directory = 'res/' + directory
         if os.path.isdir(directory) and f'res/res_{rules_dicts[str_type]}_k{k}' in directory:
             if gap is None or f'_gap{gap}' in directory:
-                try:
-                    print(directory)
-                    ds, q_c, q_c_fit = plot_res(str_type=str_type, av_degree=k, res_dir=directory)
-                    ds_list.append(ds)
-                    q_c_list.append(q_c)
-                    q_c_fit_list.append(q_c_fit)
-                except Exception as e:
-                    print(e)
+                print(directory)
+                ds, q_c, q_c_fit = plot_res(str_type=str_type, av_degree=k, res_dir=directory)
+                ds_list.append(ds)
+                q_c_list.append(q_c)
+                q_c_fit_list.append(q_c_fit)
 
     print('ds_list =', ds_list)
     print('q_c_list =', q_c_list)

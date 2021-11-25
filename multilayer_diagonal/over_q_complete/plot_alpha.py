@@ -31,10 +31,10 @@ def plot_res(str_type=None, av_degree=None):
     fig = plt.figure(figsize=(4, 3))
 
     ###########################################
-    T1 = -1
-    S1_list = np.linspace(-1.95, 0, 40)
-    T2 = -1
-    S2_list = np.linspace(-2.05, -4, 40)
+    T1_list = np.linspace(-1, -3, 11)[1:]
+    S1 = -2.0
+    T2_list = -2.0 - T1_list
+    S2 = -2.0
     ###########################################
 
     conv_time = []
@@ -44,11 +44,11 @@ def plot_res(str_type=None, av_degree=None):
     coop = []
     coop_std = []
     delta_s = []
-    for S1, S2 in zip(S1_list, S2_list):
-        S1 = round(S1, 2)
-        S2 = round(S2, 2)
-        ds = round(S1 - S2, 2)
-        delta_s.append(ds)
+    for T1, T2 in zip(T1_list, T2_list):
+        T1 = round(T1, 2)
+        T2 = round(T2, 2)
+        dt = round(T2 - T1, 2)
+        delta_s.append(dt)
         try:
             layers_config = config_values['multilayer']['layers_config']
             layers_config[0]['T'] = T1
@@ -59,11 +59,11 @@ def plot_res(str_type=None, av_degree=None):
             multi_conf = dict(config_values['multilayer'], shared_nodes_ratio=1.0, layers_config=layers_config)
             conf = dict(config_values, multilayer=multi_conf, update_str_type=update_str_type, av_degree=k)
 
-            res_dir = f"res/res_{rules[update_str_type]}_k{k}_gap{ds}"
+            res_dir = f"res/res_{rules[update_str_type]}_k{k}_gap{dt}"
             res, conf = read_stationary_generic(conf, directory=res_dir)
         except Exception as e:
             conf = dict(config_values, multilayer=multi_conf, update_str_type=update_str_type, av_degree=k, sample_size=2001)
-            res_dir = f"res/res_{rules[update_str_type]}_k{k}_gap{ds}"
+            res_dir = f"res/res_{rules[update_str_type]}_k{k}_gap{dt}"
             res, conf = read_stationary_generic(conf, directory=res_dir)
             # print('ERROR? WHY?')  # it's if the simulation didn't finish yet
 
@@ -77,8 +77,8 @@ def plot_res(str_type=None, av_degree=None):
 
         for j in range(conf['sample_size']):
             for i, value in enumerate(res['left_fraction'][j]):
-                if random() < 0.01:
-                    plt.plot(ds, value, marker='o', markerfacecolor='none', alpha=0.05, color=COLORS[i])
+                if random() < 1:
+                    plt.plot(dt, value, marker='o', markerfacecolor='none', alpha=0.05, color=COLORS[i])
 
     for i, value in enumerate(zip(*coop)):
         plt.plot(delta_s, value, color=COLORS2[i])
@@ -91,7 +91,7 @@ def plot_res(str_type=None, av_degree=None):
     # for i, value in enumerate(zip(*active)):
     #     plt.plot(delta_s, value, label=f'L{i}' + r' $\rho$', color=COLORS3[i], alpha=0.5)
 
-    plt.xlabel(r'$\Delta S$')
+    plt.xlabel(r'$\Delta S (=\Delta T)$')
     plt.ylabel(r'$\alpha$')
     plt.title(f"{names[conf['update_str_type']]}, N={conf['num_nodes']}, k={conf['av_degree']}, q=1")
     plt.ylim([-0.04, 1.04])
@@ -106,7 +106,7 @@ def plot_res(str_type=None, av_degree=None):
     # plt.gcf().subplots_adjust(top=1, bottom=0.8, right=1, left=0.09)
     plt.tight_layout()
 
-    plot_name = f"plots/{res_dir[4:].split('gap')[0]}.png"
+    plot_name = f"plots/alpha_{res_dir[4:].split('gap')[0]}.png"
     plt.savefig(plot_name)
     plt.show()
     plt.close()
@@ -114,8 +114,8 @@ def plot_res(str_type=None, av_degree=None):
 
 
 if __name__ == '__main__':
-    update_str_type = const.BEST_RESPONSE
-    k = 8
+    update_str_type = const.UNCOND_IMITATION
+    k = 499
     plot_res(str_type=update_str_type, av_degree=k)
 
 

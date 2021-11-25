@@ -15,7 +15,7 @@ config_values = {
     "loop_length": 100000,
     "number_of_loops": 10,
     "check_frozen": True,
-    "sample_size": 2000,
+    "sample_size": 100,
     "multilayer":
         {
             "num_layers": 2,
