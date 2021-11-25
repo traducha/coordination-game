@@ -120,7 +120,7 @@ def plot_res(str_type=None, av_degree=None, res_dir=''):
 if __name__ == '__main__':
     str_type = const.UNCOND_IMITATION
     k = 499
-    gap = None
+    gap = 4.0
 
     ds_list = []
     q_c_list = []

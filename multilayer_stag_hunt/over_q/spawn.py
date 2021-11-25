@@ -14,9 +14,9 @@ if __name__ == '__main__':
     script = f'run_over_nov.py'
 
     ###########################################
-    update_str_type = const.REPLICATOR
+    update_str_type = const.BEST_RESPONSE
     ###########################################
-    k = 8
+    k = 32
     ###########################################
     # T1 = 0
     # S1 = 0
@@ -52,5 +52,5 @@ if __name__ == '__main__':
             else:
                 out_file = f'{results_dir}/out_nov{node_overlap}.txt'
                 er_file = f'{results_dir}/error_nov{node_overlap}.txt'
-                command = f'run -t 10:00 -o {out_file} -e {er_file} {py_path} {script} {node_overlap} {update_str_type} {results_dir} {T1} {S1} {T2} {S2} {k}'
+                command = f'run -t 24:00 -o {out_file} -e {er_file} {py_path} {script} {node_overlap} {update_str_type} {results_dir} {T1} {S1} {T2} {S2} {k}'
                 os.system(command)

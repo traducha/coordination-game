@@ -113,18 +113,20 @@ def plot_res(str_type=None, av_degree=None, res_dir=''):
 if __name__ == '__main__':
     str_type = const.UNCOND_IMITATION
     k = 499
+    gap = 1.0
 
     ds_list = []
     q_c_list = []
     q_c_fit_list = []
     for directory in os.listdir(os.path.abspath('res')):
         directory = 'res/' + directory
-        if os.path.isdir(directory) and f'res_{rules_dicts[str_type]}_k{k}' in directory:
-            print(directory)
-            ds, q_c, q_c_fit = plot_res(str_type=str_type, av_degree=k, res_dir=directory)
-            ds_list.append(ds)
-            q_c_list.append(q_c)
-            q_c_fit_list.append(q_c_fit)
+        if os.path.isdir(directory) and f'res/res_{rules_dicts[str_type]}_k{k}' in directory:
+            if gap is None or f'_gap{gap}' in directory:
+                print(directory)
+                ds, q_c, q_c_fit = plot_res(str_type=str_type, av_degree=k, res_dir=directory)
+                ds_list.append(ds)
+                q_c_list.append(q_c)
+                q_c_fit_list.append(q_c_fit)
 
     print('ds_list =', ds_list)
     print('q_c_list =', q_c_list)
