@@ -2,6 +2,7 @@
 plots*/
 res*/
 _res*/
+*_res_*/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -32,14 +32,16 @@ NAMES2 = {
 }
 
 
-def plot_res(str_type=const.UNCOND_IMITATION, av_degree=2, res_dir='imit_res_b_k2_new', out_dir='plots'):
+def plot_res(str_type=const.UNCOND_IMITATION, av_degree=3, res_dir='imit_res_b_k3_new', out_dir='plots'):
     fig = plt.figure(figsize=(4, 3))
-    plt.axvline(1, linestyle='--', color='black', linewidth=0.9)
+    plt.title('b', loc='left', fontweight='bold')
+    plt.axvline(-2, linestyle='--', color='black', linewidth=0.9)
 
     # b_list = np.linspace(0.9, 2, 15)
     # b_list = np.linspace(0, 4, 30)
     # b_list = np.linspace(-9, 11, 100)
     b_list = np.linspace(-11, 11, 50)
+    s_list = -b_list-1
     # b_list = np.linspace(-11, 30, 50)
 
     conv_time = []
@@ -74,38 +76,28 @@ def plot_res(str_type=const.UNCOND_IMITATION, av_degree=2, res_dir='imit_res_b_k
             max_b = b
 
         for i, value in enumerate(res['left_fraction']):
-            plt.plot(b, 1.0-value, marker='o', markerfacecolor='none', alpha=0.05, color=COLORS[0])
+            plt.plot(-b-1, 1.0-value, marker='o', markerfacecolor='none', alpha=0.05, color=COLORS[0])
 
-    plt.plot(b_list, coop, label=r'$\alpha$', color=COLORS2[0])
-
-    plt.plot(b_list, active, label=r'$\rho$', color=COLORS3[0])
-
-    # plt.axvline(max_b, linestyle='--', color='black', linewidth=0.9)
-    print(max_b)
-
-    plt.gca().invert_xaxis()
-
-    # plt.errorbar(averages[0], averages[3], yerr=deviations[3], markerfacecolor='none', color=const.REDISH)
-    # plt.errorbar(averages[0], averages[2], yerr=deviations[2], markerfacecolor='none', color=const.GREEN_BRIGHT)
+    plt.plot(s_list, active, label=r'$\rho$', color=COLORS3[0], alpha=0.7)
+    plt.plot(s_list, coop, label=r'$\alpha$', color=COLORS2[0])
 
     plt.legend()
-    plt.xlabel('b')
-    # plt.xlim([2, 0.9])
-    plt.title(f"{NAMES[conf['update_str_type']]}, N={conf['num_nodes']}, k={conf['av_degree']}")
-              #+ (f", b={conf['b']}" if conf['b'] is not None else ''))
+    plt.xlabel(r'$S$')
+    plt.xlim([-12, 10])
+    plt.title(f"$k={av_degree}$")
 
-    left, bottom, width, height = [0.75, 0.5, 0.15, 0.12]
+    left, bottom, width, height = [0.7, 0.45, 0.2, 0.16]
     ax2 = fig.add_axes([left, bottom, width, height])
     ax2.patch.set_alpha(0.4)
     # ax2.axvline(max_b, linestyle='--', color='black')
     ax2.plot(b_list, conv_time, color=const.BLUE, label=r'$\tau$', alpha=0.7)
     ax2.legend(handlelength=0, handletextpad=0, fancybox=True, fontsize=8)
     ax2.tick_params(axis='both', which='major', labelsize=8)
-    # ax2.set_xlim([2, 1])
+    # ax2.set_xlim([-13, 9])
 
     plt.tight_layout()
 
-    plot_name = f"test_b_{NAMES2[conf['update_str_type']]}_k{conf['av_degree']}_new.png"
+    plot_name = f"suppl_plots/suppl_b_{NAMES2[conf['update_str_type']]}_k{conf['av_degree']}_new.pdf"
     plt.savefig(plot_name)
     plt.show()
     plt.close()

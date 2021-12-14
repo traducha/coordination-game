@@ -116,7 +116,7 @@ def plot_res(str_type=None, av_degree=None):
 
 if __name__ == '__main__':
     update_str_type = const.BEST_RESPONSE
-    k = 8
+    k = 32
     plot_res(str_type=update_str_type, av_degree=k)
 
 

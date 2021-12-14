@@ -37,14 +37,14 @@ def plot_res(str_type=None, av_degree=None, res_dir=''):
     active_std = []
     coop = []
     coop_std = []
-    for nov in node_overlap_list:
+    for ww, nov in enumerate(node_overlap_list):
         try:
             multi_conf = dict(config_values['multilayer'], shared_nodes_ratio=nov)
             conf = dict(config_values, multilayer=multi_conf, update_str_type=str_type, av_degree=av_degree)
             res, conf = read_stationary_generic(conf, directory=res_dir)
         except Exception:
             print('ERROR? WHY?')  # it's if the simulation didn't finish yet
-            multi_conf = dict(config_values['multilayer'], shared_nodes_ratio=0.0)
+            multi_conf = dict(config_values['multilayer'], shared_nodes_ratio=node_overlap_list[ww-1])
             conf = dict(config_values, multilayer=multi_conf, update_str_type=str_type, av_degree=av_degree)
             res, conf = read_stationary_generic(conf, directory=res_dir)
 

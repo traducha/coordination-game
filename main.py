@@ -40,7 +40,7 @@ def best_response(active_payoff, active_strategy, neig_list, pay_off_dict, pay_o
         payoff_left += pay_off_dict[const.LEFT][neig_strategy]
         payoff_right += pay_off_dict[const.RIGHT][neig_strategy]
 
-    if payoff_left == payoff_right:
+    if payoff_left == payoff_right:  # TODO check frozen without random ties braeking
         return np.random.choice([const.LEFT, const.RIGHT])
     elif payoff_left > payoff_right:
         return const.LEFT
