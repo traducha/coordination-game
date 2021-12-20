@@ -111,7 +111,7 @@ def plot_res(str_type=const.BEST_RESPONSE, N=1000, res_dir='res_best_n1000'):
     plt.legend(loc=5, handles=legend_elements)
     plt.xlabel(r'$k$')
     # plt.ylabel(r'$\alpha$')
-    plt.xlim([0, 60])
+    plt.xlim([0, 30])
     plt.ylim([-0.03, 1.03])
     plt.title("b", loc='left', fontweight='bold')
     plt.title("BR")
@@ -132,21 +132,21 @@ def plot_res(str_type=const.BEST_RESPONSE, N=1000, res_dir='res_best_n1000'):
         ]
     }
 
-    left, bottom, width, height = [0.4, 0.42, 0.3, 0.24]
-    ax2 = fig.add_axes([left, bottom, width, height])
-    ax2.patch.set_alpha(0.4)
-
-    for i, traj_file in enumerate(traj_files[str_type]):
-        with open(('trajectories/' + traj_file), 'r') as in_file:
-            from_file = json.load(in_file)
-        res, conf = from_file['results'], from_file['config']
-        ax2.plot(res['time_steps'], res['left_fraction'], color=['#efc9af', '#104c91', '#1f8ac0'][i])
-        ax2.text(traj_coords[str_type][i][0], traj_coords[str_type][i][1], f"$k$={conf['av_degree']}", fontsize=8)
-
-    ax2.tick_params(axis='both', which='major', labelsize=8)
-    ax2.set_ylim([0, 1])
-    ax2.set_xlabel(r'$t$')
-    ax2.set_ylabel(r'$\alpha$')
+    # left, bottom, width, height = [0.4, 0.42, 0.3, 0.24]
+    # ax2 = fig.add_axes([left, bottom, width, height])
+    # ax2.patch.set_alpha(0.4)
+    #
+    # for i, traj_file in enumerate(traj_files[str_type]):
+    #     with open(('trajectories/' + traj_file), 'r') as in_file:
+    #         from_file = json.load(in_file)
+    #     res, conf = from_file['results'], from_file['config']
+    #     ax2.plot(res['time_steps'], res['left_fraction'], color=['#efc9af', '#104c91', '#1f8ac0'][i])
+    #     ax2.text(traj_coords[str_type][i][0], traj_coords[str_type][i][1], f"$k$={conf['av_degree']}", fontsize=8)
+    #
+    # ax2.tick_params(axis='both', which='major', labelsize=8)
+    # ax2.set_ylim([0, 1])
+    # ax2.set_xlabel(r'$t$')
+    # ax2.set_ylabel(r'$\alpha$')
 
     # plt.gcf().subplots_adjust(top=1, bottom=0.8, right=1, left=0.09)
     plt.tight_layout()
