@@ -38,7 +38,7 @@ def plot_res():
         res, conf = from_file['results'], from_file['config']
         plt.plot(res['time_steps'], res['left_fraction'], label=f'$k={k}$', color=COLORS[i])
 
-    plt.legend(fontsize=9)
+    plt.legend(fontsize=9, loc=1)
     # plt.gcf().subplots_adjust(top=1, bottom=0.8, right=1, left=0.09)
     plt.tight_layout()
 
