@@ -26,12 +26,12 @@ def plot_res():
 
     plt.xlabel(r'$t$')
     plt.ylabel(r'$\alpha$')
-    plt.xlim([0, 20])
+    plt.xlim([0, 15])
     plt.ylim([-0.0, 1.0])
     plt.title("c", loc='left', fontweight='bold')
     plt.title("UI")
 
-    for i, k in enumerate([8, 20, 40]):
+    for i, k in enumerate([2, 7, 10, 20, 22, 33, 40]):
         file_name = f'trajectory_n1000_k{k}_bNone_RNone_PNone_TNone_SNone_pay1_up2_loo5_len10_num50000_che1_sam500.json'
         with open(('trajectories/' + file_name), 'r') as in_file:
             from_file = json.load(in_file)
