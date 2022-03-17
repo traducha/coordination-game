@@ -69,7 +69,7 @@ def plot_res(str_type=None, av_degree=None, res_dir=''):
     plt.axvline(q_c, ymin=-0.5, ymax=0.03, color=const.REDISH)
 
     # fitting
-    popt, pcov = curve_fit(func, node_overlap_list, d_alpha, p0=(-10, 0, -1, 10, 1))
+    popt, pcov = curve_fit(func, node_overlap_list, d_alpha, p0=(-10, 0, -1, 10, 1), maxfev=10000)
     print(popt)
     plt.plot(np.linspace(0, 1, 100), func(np.linspace(0, 1, 100), *popt), color='#777777', linestyle='--')
     q_c_fit = next((x for x in np.linspace(0, 1, 1000) if func(x, *popt) < 0.01), None)
@@ -118,9 +118,9 @@ def plot_res(str_type=None, av_degree=None, res_dir=''):
 
 
 if __name__ == '__main__':
-    str_type = const.REPLICATOR
+    str_type = const.BEST_RESPONSE
     k = 499
-    gap = None
+    gap = 0.4
 
     ds_list = []
     q_c_list = []
