@@ -12,6 +12,8 @@ RED = '#eb0202'
 REDISH = '#FF4C3B'
 YELLOW = '#FFD034'
 ORANGE = '#f79e02'
+BROWN = '#954535'
+BROWN_LIGHT = '#E1C16E'
 
 # strategies
 LEFT = 'left'  # the left (or upper, or alpha) one, risk-dominant in the complex matrix
