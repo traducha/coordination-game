@@ -77,7 +77,7 @@ if __name__ == '__main__':
         for directory in os.listdir(os.path.abspath('res')):
             directory = 'res/' + directory
             if os.path.isdir(directory) and f'res/res_{rules_dicts[str_type]}_k{k}' in directory:
-                if f'_gap{gap}' in directory:
+                if f'_gap{gap}' in directory and directory[-3:] == str(gap):
                     coop, qs = plot_res(str_type=str_type, av_degree=k, res_dir=directory)
                     diagram.append(coop)
                     if qs is not None:
@@ -86,16 +86,19 @@ if __name__ == '__main__':
 
     for i in range(len(diagram)):
         for j in range(len(diagram[i])):
+            print(i)
+            print(j)
+            print()
             if node_overlap_list[j] < q_c_fit_list[i]:
                 diagram[i][j] = float('inf')
 
     plt.imshow(diagram, origin='lower', extent=[0, 1, 0.4, 4], aspect='auto', interpolation='none')  # hamming
 
     plt.plot(q_c_fit_list, ds_list, color='black')
-    plt.axhline(1.47, xmin=0.52, color='black')
+    plt.axhline(1.47, xmin=0.52, color='black', linestyle='--')
 
     ax = plt.gca()
-    ax.set_facecolor('thistle')  # plum
+    ax.set_facecolor('plum')  # plum
     plt.xlabel(r'$q$')
     plt.ylabel(r'$\Delta S$')
     cbar = plt.colorbar()

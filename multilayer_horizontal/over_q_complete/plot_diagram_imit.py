@@ -40,7 +40,7 @@ def plot_res(str_type=None, av_degree=None, res_dir=''):
             res, conf = read_stationary_generic(conf, directory=res_dir)
         except Exception:
             print('ERROR? WHY?')  # it's if the simulation didn't finish yet
-            multi_conf = dict(config_values['multilayer'], shared_nodes_ratio=0.0)
+            multi_conf = dict(config_values['multilayer'], shared_nodes_ratio=node_overlap_list[ww-1])
             conf = dict(config_values, multilayer=multi_conf, update_str_type=str_type, av_degree=av_degree)
             res, conf = read_stationary_generic(conf, directory=res_dir)
 
@@ -91,10 +91,11 @@ if __name__ == '__main__':
 
     plt.imshow(diagram, origin='lower', extent=[0, 1, 0.4, 4], aspect='auto', interpolation='none')  # hamming
 
-    plt.axhline(0.71, color='black')
+    plt.axhline(0.73, xmin=0.03, color='black', linestyle='--')
+    plt.axvline(0.03, color='black')
 
     ax = plt.gca()
-    ax.set_facecolor('thistle')  # plum
+    ax.set_facecolor('plum')  # plum
     plt.xlabel(r'$q$')
     plt.ylabel(r'$\Delta S$')
     cbar = plt.colorbar()

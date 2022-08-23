@@ -95,7 +95,7 @@ if __name__ == '__main__':
     plt.plot(qs_list, qs_ds_list, color='black', linestyle='--')
 
     ax = plt.gca()
-    ax.set_facecolor('thistle')  # plum
+    ax.set_facecolor('plum')  # plum, thistle
     plt.xlabel(r'$q$')
     plt.ylabel(r'$\Delta S$')
     cbar = plt.colorbar()

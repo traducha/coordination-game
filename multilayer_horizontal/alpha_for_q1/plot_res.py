@@ -18,11 +18,6 @@ from constants import rules_names as names
 from config import config_values
 
 
-COLORS = [const.GREEN, const.YELLOW]
-COLORS2 = [const.GREEN_DARK, const.ORANGE]
-COLORS3 = [const.REDISH, const.BLUE]
-
-
 def func(x, a, b, c, d, e):
     return (a*(x**2.0) + b*x + e) / (1+np.exp(d*x + c))
 
@@ -78,10 +73,10 @@ def plot_res(str_type=None, av_degree=None):
         for j in range(conf['sample_size']):
             for i, value in enumerate(res['left_fraction'][j]):
                 if random() < 0.01:
-                    plt.plot(ds, value, marker='o', markerfacecolor='none', alpha=0.05, color=COLORS[i])
+                    plt.plot(ds, value, marker='o', markerfacecolor='none', alpha=0.05, color=const.BROWN_LIGHT)
 
     for i, value in enumerate(zip(*coop)):
-        plt.plot(delta_s, value, color=COLORS2[i])
+        plt.plot(delta_s, value, color=const.BROWN)
         break
 
 
@@ -93,15 +88,15 @@ def plot_res(str_type=None, av_degree=None):
 
     plt.xlabel(r'$\Delta S$')
     plt.ylabel(r'$\alpha$')
-    plt.title(f"{names[conf['update_str_type']]}, N={conf['num_nodes']}, k={conf['av_degree']}, q=1")
+    plt.title(f"{names[conf['update_str_type']]}, $N$={conf['num_nodes']}, $k$={conf['av_degree']}, $q$=1")
     plt.ylim([-0.04, 1.04])
 
-    left, bottom, width, height = [0.7, 0.32, 0.15, 0.12]
-    ax2 = fig.add_axes([left, bottom, width, height])
-    ax2.patch.set_alpha(0.4)
-    ax2.plot(delta_s, conv_time, color=const.BLUE, label=r'$\tau$', alpha=0.7)
-    ax2.legend(handlelength=0, handletextpad=0, fancybox=True, fontsize=8)
-    ax2.tick_params(axis='both', which='major', labelsize=8)
+    # left, bottom, width, height = [0.7, 0.32, 0.15, 0.12]
+    # ax2 = fig.add_axes([left, bottom, width, height])
+    # ax2.patch.set_alpha(0.4)
+    # ax2.plot(delta_s, conv_time, color=const.BLUE, label=r'$\tau$', alpha=0.7)
+    # ax2.legend(handlelength=0, handletextpad=0, fancybox=True, fontsize=8)
+    # ax2.tick_params(axis='both', which='major', labelsize=8)
 
     # plt.gcf().subplots_adjust(top=1, bottom=0.8, right=1, left=0.09)
     plt.tight_layout()
@@ -114,7 +109,7 @@ def plot_res(str_type=None, av_degree=None):
 
 
 if __name__ == '__main__':
-    update_str_type = const.BEST_RESPONSE
+    update_str_type = const.REPLICATOR
     k = 8
     plot_res(str_type=update_str_type, av_degree=k)
 

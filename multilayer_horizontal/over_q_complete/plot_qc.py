@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+from matplotlib.lines import Line2D
 
 import constants as const
 from constants import rules_names
@@ -39,18 +40,23 @@ print('q_c_fit_list =', q_c_fit_list)
 
 fig = plt.figure(figsize=(4, 3))
 
-plt.scatter(ds_list, q_c_list, color=const.REDISH, label='first 0')
+plt.scatter(ds_list, q_c_list, color=const.REDISH, label=r'$q_c$', marker='v')
 plt.plot(ds_list, q_c_list, color=const.REDISH)
-plt.scatter(ds_list, q_c_fit_list, color=const.BLUE, label='fitted')
+plt.scatter(ds_list, q_c_fit_list, color=const.BLUE, label=r'$q_c^{fit}$', marker='o')
 plt.plot(ds_list, q_c_fit_list, color=const.BLUE)
-plt.legend()
+
+
+legend_elements = [
+        Line2D([0], [0], marker='v', color=const.REDISH, lw=1.3, label=r'$q_c$'),
+        Line2D([0], [0], marker='o', color=const.BLUE, lw=1.3, label=r'$q_c^{fit}$')]
+plt.legend(handles=legend_elements)
 
 # plt.xlim([0, 4])
 # plt.ylim([0, 1])
 
 plt.xlabel(r'$\Delta S$')
 plt.ylabel(r'$q_c$')
-plt.title(f'{rules_names[rule]}, T=-1, N={N}, k={k}')
+plt.title(f'{rules_names[rule]}, $N$={N}, $k$={k}')
 
 plt.tight_layout()
 plt.savefig(f'plots/q_c_{rules_dicts[rule]}_k{k}.png')

@@ -94,7 +94,7 @@ if __name__ == '__main__':
     plt.plot(q_c_fit_list, ds_list, color='black')
 
     ax = plt.gca()
-    ax.set_facecolor('thistle')  # plum
+    ax.set_facecolor('plum')  # plum
     plt.xlabel(r'$q$')
     plt.ylabel(r'$\Delta S$')
     cbar = plt.colorbar()
