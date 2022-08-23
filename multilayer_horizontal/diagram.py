@@ -33,15 +33,12 @@ def plot():
         plt.axvline(line, linestyle=':', linewidth=0.7, color='gray')
 
 
-    # x = np.linspace(-4.5, 0, 30)
-    # plt.plot(x, linear(x, 1, 1), color=const.REDISH)
-
     # plt.text(-3.95, -0.9, "horizontal", fontsize=10, color='#333333')
     # x = np.linspace(-4, 0, 30)
-    # plt.plot(x, linear(x, 0, -1), color=const.VIOLET, alpha=1, linewidth=0.7)
+    # plt.plot(x, linear(x, 0, -1), color='black', alpha=1, linewidth=0.7)
     #
     # plt.text(-1.94, 0.8, "vertical", fontsize=10, rotation=-90, color='#333333')
-    # plt.plot([-2, -2], [-3, 1], color=const.VIOLET, alpha=1, linewidth=0.7)
+    # plt.plot([-2, -2], [-3, 1], color='black', alpha=1, linewidth=0.7)
 
     plt.text(-3.95, 0.5, "diagonal", fontsize=10, rotation=-45, color='#333333')
     x = np.linspace(-4, 0, 30)
@@ -49,7 +46,7 @@ def plot():
 
     plt.text(-1.05, 0.63, "stag hunt", fontsize=10, rotation=-45, color='#333333')
     x = np.linspace(-1, 0, 30)
-    plt.plot(x, linear(x, -1, 0), color=const.VIOLET, alpha=1, linewidth=0.7)
+    plt.plot(x, linear(x, -1, 0), color='black', alpha=1, linewidth=0.7)
 
     plt.fill_between([-4.5, 0], -4.5, [-3.5, 1], color=PARETO, alpha=0.55)
     plt.fill_between([-4.5, 0], 1, [-3.5, 1], color=NON_PARETO, alpha=0.45)
@@ -71,8 +68,8 @@ def plot():
 
     # for S1 in np.linspace(-2, 0, 11)[1:]:
     #     S2 = -4.0 - S1
-    #     plt.scatter(S1, -1, marker="o", color=const.VIOLET, s=18)
-    #     plt.scatter(S2, -1, marker="o", color=const.VIOLET, s=18)
+    #     plt.scatter(S1, -1, marker="o", color='black', s=18)
+    #     plt.scatter(S2, -1, marker="o", color='black', s=18)
 
     for T1 in np.linspace(-1, -3, 11)[1:]:
         T1 = round(T1, 2)
@@ -93,8 +90,8 @@ def plot():
     # for T1 in np.linspace(-1, -3, 11)[1:]:
     #     T1 = round(T1, 2)
     #     T2 = round(-2.0 - T1, 2)
-    #     plt.scatter(-2, T1, marker="o", color=const.VIOLET, s=18)
-    #     plt.scatter(-2, T2, marker="o", color=const.VIOLET, s=18)
+    #     plt.scatter(-2, T1, marker="o", color='black', s=18)
+    #     plt.scatter(-2, T2, marker="o", color='black', s=18)
 
     plt.text(-1.15, -1.68, r"$(S^{I}, T^{I})$", fontsize=10, color='black')
     plt.text(-2.75, -0.08, r"$(S^{II}, T^{II})$", fontsize=10, color='black')
