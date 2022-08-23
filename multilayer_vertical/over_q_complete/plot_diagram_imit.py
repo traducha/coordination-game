@@ -91,17 +91,18 @@ if __name__ == '__main__':
 
     plt.imshow(diagram, origin='lower', extent=[0, 1, 0.4, 4], aspect='auto', interpolation='none')  # hamming
 
-    plt.axhline(0.73, color='black')
+    plt.axhline(0.73, xmin=0.03, color='black', linestyle='--')
+    plt.axvline(0.03, color='black')
 
     ax = plt.gca()
-    ax.set_facecolor('thistle')  # plum
+    ax.set_facecolor('plum')  # plum
     plt.xlabel(r'$q$')
     plt.ylabel(r'$\Delta T$')
     cbar = plt.colorbar()
     cbar.mappable.set_clim(0, 1)
     plt.title(f'{names[str_type]}:' + r' $\langle \alpha \rangle$ for synchronized layers')
 
-    plt.text(0.3, 2.5, 'Pareto-optimal', color='white')
+    plt.text(0.3, 2.5, 'strategy B', color='white')
     plt.text(0.1, 0.48, 'coordination on any strategy', color='white')
 
     plt.tight_layout()

@@ -92,10 +92,10 @@ if __name__ == '__main__':
     plt.imshow(diagram, origin='lower', extent=[0, 1, 0.4, 4], aspect='auto', interpolation='none')  # hamming
 
     plt.plot(q_c_list, ds_list, color='black')
-    plt.axhline(1.47, xmin=0.53, color='black')
+    plt.axhline(1.47, xmin=0.53, color='black', linestyle='--')
 
     ax = plt.gca()
-    ax.set_facecolor('thistle')  # plum
+    ax.set_facecolor('plum')  # plum
     plt.xlabel(r'$q$')
     plt.ylabel(r'$\Delta T$')
     cbar = plt.colorbar()
@@ -103,8 +103,8 @@ if __name__ == '__main__':
     plt.title(f'{names[str_type]}:' + r' $\langle \alpha \rangle$ for synchronized layers')
 
     plt.text(0.1, 3.2, 'no synchronization')
-    plt.text(0.575, 2., 'risk-dominant', color='white')
-    plt.text(0.575, 0.7, 'coordination\non any strategy')
+    plt.text(0.575, 2., 'strategy B', color='white')
+    plt.text(0.57, 0.7, 'coordination\non any strategy')
 
     plt.tight_layout()
     plot_name = f"plots/diagram_vert_{rules_dicts[str_type]}.png"

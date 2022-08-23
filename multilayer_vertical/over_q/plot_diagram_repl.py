@@ -95,7 +95,7 @@ if __name__ == '__main__':
     plt.plot(qs_list, qs_ds_list, color='black', linestyle='--')
 
     ax = plt.gca()
-    ax.set_facecolor('thistle')  # plum
+    ax.set_facecolor('plum')  # plum
     plt.xlabel(r'$q$')
     plt.ylabel(r'$\Delta T$')
     cbar = plt.colorbar()
@@ -104,7 +104,7 @@ if __name__ == '__main__':
 
     plt.text(0.03, 3.6, 'no synchronization')
     plt.text(0.24, 2.8, 'Pareto-optimal', rotation=64, fontsize=8)
-    plt.text(0.57, 1.2, '     coordination\non any strategy')
+    plt.text(0.5, 1.2, '     coordination\non any strategy')
 
     plt.tight_layout()
     plot_name = f"plots/diagram_vert_{rules_dicts[str_type]}.png"
