@@ -93,12 +93,12 @@ if __name__ == '__main__':
 
     cut = 4
     plt.plot(q_c_list[:cut], ds_list[:cut], color='black')
-    plt.plot(q_c_fit_list[cut-1:], ds_list[cut-1:], color='black', linestyle='--')
+    plt.plot(q_c_fit_list[cut-1:], ds_list[cut-1:], color='black', linestyle='-.')
 
     ax = plt.gca()
-    ax.set_facecolor('thistle')  # plum
+    ax.set_facecolor('plum')  # plum
     plt.xlabel(r'$q$')
-    plt.ylabel(r'$\Delta T$ ($\Delta S$)')
+    plt.ylabel(r'$\Delta S (= \Delta T)$')
     cbar = plt.colorbar()
     cbar.mappable.set_clim(0, 1)
     plt.title(f'{names[str_type]}:' + r' $\langle \alpha \rangle$ for synchronized layers')

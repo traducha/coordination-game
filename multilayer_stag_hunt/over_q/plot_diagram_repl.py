@@ -97,9 +97,9 @@ if __name__ == '__main__':
     plt.plot(qs_list, qs_ds_list, color='black', linestyle='--')
 
     ax = plt.gca()
-    ax.set_facecolor('thistle')  # plum
+    ax.set_facecolor('plum')  # plum
     plt.xlabel(r'$q$')
-    plt.ylabel(r'$\Delta T$ ($\Delta S$)')
+    plt.ylabel(r'$\Delta S (= \Delta T)$')
     cbar = plt.colorbar()
     cbar.mappable.set_clim(0, 1)
     plt.title(f'{names[str_type]}:' + r' $\langle \alpha \rangle$ for synchronized layers')
