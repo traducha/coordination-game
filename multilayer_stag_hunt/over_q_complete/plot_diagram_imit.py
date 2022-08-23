@@ -58,7 +58,7 @@ def plot_res(str_type=None, av_degree=None, res_dir=''):
 
     q_star = None
     for i, coop_value in enumerate(l1_coop):
-        if coop_value >= 0.98:
+        if coop_value >= 0.94:
             q_star = node_overlap_list[i]
 
     return l1_coop, q_star
@@ -91,19 +91,19 @@ if __name__ == '__main__':
 
     plt.imshow(diagram, origin='lower', extent=[0, 1, 0.1, 1], aspect='auto', interpolation='none')  # hamming
 
+    plt.axvline(0.03, color='black')
     plt.plot(qs_list, qs_ds_list, color='black', linestyle='--')
 
     ax = plt.gca()
-    ax.set_facecolor('thistle')  # plum
+    ax.set_facecolor('plum')  # plum
     plt.xlabel(r'$q$')
-    plt.ylabel(r'$\Delta T$ ($\Delta S$)')
+    plt.ylabel(r'$\Delta S (= \Delta T)$')
     cbar = plt.colorbar()
     cbar.mappable.set_clim(0, 1)
     plt.title(f'{names[str_type]}:' + r' $\langle \alpha \rangle$ for synchronized layers')
 
     plt.text(0.12, 0.55, 'Pareto-optimal')
-    plt.text(0.65, 0.5, 'coordination\non any strategy', rotation=55)
-    plt.text(0.7, 3.55/4, r'risk-dominant $\to$', rotation=55)
+    plt.text(0.83, 0.6, 'coordination\non any strategy', rotation=90)
 
     plt.tight_layout()
     plot_name = f"plots/diagram_stag_{rules_dicts[str_type]}.png"

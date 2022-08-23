@@ -44,12 +44,12 @@ def plot_res(str_type=None, av_degree=None):
     coop = []
     coop_std = []
     delta_s = []
-    for T1 in np.linspace(0, 0.45, 10):
-        T1 = round(T1, 2)
+    for T1 in np.linspace(0, 0.45, 20):
+        T1 = round(T1, 3)
         S1 = -T1
         T2 = 1 - T1
         S2 = -T2
-        ds = round(S1 - S2, 2)
+        ds = round(S1 - S2, 3)
         delta_s.append(ds)
         try:
             layers_config = config_values['multilayer']['layers_config']
@@ -61,7 +61,7 @@ def plot_res(str_type=None, av_degree=None):
             multi_conf = dict(config_values['multilayer'], shared_nodes_ratio=1.0, layers_config=layers_config)
             conf = dict(config_values, multilayer=multi_conf, update_str_type=update_str_type, av_degree=k)
 
-            res_dir = f"res/res_{rules[update_str_type]}_k{k}_gap{ds}"
+            res_dir = f"res/long_res_{rules[update_str_type]}_k{k}_gap{ds}"
             res, conf = read_stationary_generic(conf, directory=res_dir)
         except Exception as e:
             res_dir = f"res/res_{rules[update_str_type]}_k{k}_gap{ds}"
@@ -78,11 +78,11 @@ def plot_res(str_type=None, av_degree=None):
 
         for j in range(conf['sample_size']):
             for i, value in enumerate(res['left_fraction'][j]):
-                if random() < 1:
-                    plt.plot(ds, value, marker='o', markerfacecolor='none', alpha=0.05, color=COLORS[i])
+                if random() < 0.2:
+                    plt.plot(ds, value, marker='o', markerfacecolor='none', alpha=0.05, color=const.BROWN_LIGHT)
 
     for i, value in enumerate(zip(*coop)):
-        plt.plot(delta_s, value, color=COLORS2[i])
+        plt.plot(delta_s, value, color=const.BROWN)
         break
 
 
@@ -94,15 +94,15 @@ def plot_res(str_type=None, av_degree=None):
 
     plt.xlabel(r'$\Delta S (= \Delta T)$')
     plt.ylabel(r'$\alpha$')
-    plt.title(f"{names[conf['update_str_type']]}, N={conf['num_nodes']}, k={conf['av_degree']}, q=1")
+    plt.title(f"{names[conf['update_str_type']]}, $N$={conf['num_nodes']}, $k$={conf['av_degree']}, $q$=1")
     plt.ylim([-0.04, 1.04])
 
-    left, bottom, width, height = [0.7, 0.32, 0.15, 0.12]
-    ax2 = fig.add_axes([left, bottom, width, height])
-    ax2.patch.set_alpha(0.4)
-    ax2.plot(delta_s, conv_time, color=const.BLUE, label=r'$\tau$', alpha=0.7)
-    ax2.legend(handlelength=0, handletextpad=0, fancybox=True, fontsize=8)
-    ax2.tick_params(axis='both', which='major', labelsize=8)
+    # left, bottom, width, height = [0.7, 0.32, 0.15, 0.12]
+    # ax2 = fig.add_axes([left, bottom, width, height])
+    # ax2.patch.set_alpha(0.4)
+    # ax2.plot(delta_s, conv_time, color=const.BLUE, label=r'$\tau$', alpha=0.7)
+    # ax2.legend(handlelength=0, handletextpad=0, fancybox=True, fontsize=8)
+    # ax2.tick_params(axis='both', which='major', labelsize=8)
 
     # plt.gcf().subplots_adjust(top=1, bottom=0.8, right=1, left=0.09)
     plt.tight_layout()

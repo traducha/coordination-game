@@ -91,19 +91,21 @@ if __name__ == '__main__':
 
     plt.imshow(diagram, origin='lower', extent=[0, 1, 0.4, 4], aspect='auto', interpolation='none')  # hamming
 
-    plt.axhline(2.2, xmax=0.48, color='black')
+    plt.axhline(2.2, xmin=0.03, xmax=0.48, color='black', linestyle='--')
     plt.plot(qs_list, qs_ds_list, color='black', linestyle='--')
+    plt.axvline(0.03, color='black')
+
 
     ax = plt.gca()
-    ax.set_facecolor('thistle')  # plum
+    ax.set_facecolor('plum')  # plum
     plt.xlabel(r'$q$')
-    plt.ylabel(r'$\Delta T$ ($\Delta S$)')
+    plt.ylabel(r'$\Delta S (= \Delta T)$')
     cbar = plt.colorbar()
     cbar.mappable.set_clim(0, 1)
     plt.title(f'{names[str_type]}:' + r' $\langle \alpha \rangle$ for synchronized layers')
 
     plt.text(0.15, 3.1, 'Pareto-optimal')
-    plt.text(0.7, 3.55, r'risk-dominant $\to$', rotation=55)
+    # plt.text(0.7, 3.55, r'risk-dominant $\to$', rotation=55)
     plt.text(0.4, 1.0, 'coordination\non any strategy')
 
     plt.tight_layout()
