@@ -26,7 +26,7 @@ if __name__ == '__main__':
     node_overlap_list = np.linspace(0, 1, 30)
     ###########################################
 
-    for T1 in np.linspace(-1, -3, 11)[1:]:
+    for T1 in [-2.0]: # np.linspace(-1, -3, 11)[1:]:
         T1 = round(T1, 2)
         T2 = round(-2.0 - T1, 2)
         S1 = round(-T1 - 3.0, 2)
@@ -52,5 +52,5 @@ if __name__ == '__main__':
             else:
                 out_file = f'{results_dir}/out_nov{node_overlap}.txt'
                 er_file = f'{results_dir}/error_nov{node_overlap}.txt'
-                command = f'run -t 50:00 -o {out_file} -e {er_file} {py_path} {script} {node_overlap} {update_str_type} {results_dir} {T1} {S1} {T2} {S2} {k}'
+                command = f'run -t 200:00 -o {out_file} -e {er_file} {py_path} {script} {node_overlap} {update_str_type} {results_dir} {T1} {S1} {T2} {S2} {k}'
                 os.system(command)

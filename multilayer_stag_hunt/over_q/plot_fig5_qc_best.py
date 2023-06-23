@@ -41,7 +41,7 @@ plt.plot(ds_list, q_c_fit_list, color=const.BLUE)
 legend_elements = [
         Line2D([0], [0], marker='v', color=const.REDISH, lw=1.3, label=r'$q_c$'),
         Line2D([0], [0], marker='o', color=const.BLUE, lw=1.3, label=r'$q_c^{fit}$')]
-plt.legend(handles=legend_elements)
+plt.legend(handles=legend_elements, loc=4)
 
 # plt.xlim([0, 4])
 # plt.ylim([0, 1])
@@ -50,6 +50,8 @@ plt.xlabel(r'$\Delta S (= \Delta T)$')
 plt.ylabel(r'$q_c$')
 plt.title(f'{rules_names[rule]}')
 plt.title("d", loc='left', fontweight='bold')
+
+plt.ylim([0.00, 1.035])
 
 plt.tight_layout()
 plt.savefig(f'plots/fig5_q_c_{rules_dicts[rule]}_k{k}.pdf')

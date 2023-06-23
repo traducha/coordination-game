@@ -51,6 +51,8 @@ plt.ylabel(r'$q_c$')
 plt.title(f'{rules_names[rule]}')
 plt.title("c", loc='left', fontweight='bold')
 
+plt.ylim([0.00, 1.035])
+
 plt.tight_layout()
 plt.savefig(f'plots/fig5_q_c_{rules_dicts[rule]}_k{k}.pdf')
 plt.show()

@@ -67,6 +67,9 @@ def plot_res(str_type=None, av_degree=None, res_dir=''):
     q_c = node_overlap_list[d_alpha.index(0.0)]
     plt.axvline(q_c, ymin=-0.5, ymax=0.03, color=const.REDISH)
 
+    plt.axvline(0.55, ymin=1+0.5, ymax=1-0.03, color=const.RED)
+    plt.text(0.55, 0.78, f'$q_p=0.55$', fontsize=9)
+
     # fitting
     popt, pcov = curve_fit(func, node_overlap_list, d_alpha, p0=(-10, 0, -1, 10, 1))
     print(popt)

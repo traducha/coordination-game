@@ -68,6 +68,9 @@ def plot_res(str_type=None, av_degree=None, res_dir=''):
     plt.axvline(q_c, ymin=-0.5, ymax=0.03, color=const.REDISH)
     plt.text(q_c + 0.02, 0.04, r'$q_c \to 0$', fontsize=9)
 
+    plt.axvline(0.758, ymin=1+0.5, ymax=1-0.03, color=const.RED)
+    plt.text(0.758 + 0.06, 0.9, f'$q_p=0.76$', fontsize=9)
+
     plt.plot(node_overlap_list, d_alpha, label=r'$\Delta\alpha$', color='#21918c', linewidth=1)
 
     legend_elements = [
