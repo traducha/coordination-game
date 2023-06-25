@@ -6,6 +6,7 @@ import numpy as np
 import json
 import time
 import os
+import matplotlib
 
 import constants as const
 
@@ -91,13 +92,16 @@ if __name__ == '__main__':
             if node_overlap_list[j] < q_c_fit_list[i]:
                 diagram[i][j] = float('inf')
 
-    plt.imshow(diagram, origin='lower', extent=[0, 1, 0.1, 1], aspect='auto', interpolation='none')  # hamming
+    cmap = matplotlib.cm.viridis
+    cmap.set_bad(color='plum')
+
+    plt.imshow(diagram, origin='lower', extent=[0, 1, 0.1, 1], aspect='auto', cmap=cmap)  # hamming
 
     plt.plot(q_c_fit_list, ds_list, color='black')
     plt.plot(qs_list, qs_ds_list, color='black', linestyle='--')
 
     ax = plt.gca()
-    ax.set_facecolor('plum')  # plum
+    # ax.set_facecolor('plum')  # plum
     plt.xlabel(r'$q$')
     plt.ylabel(r'$\Delta S (= \Delta T)$')
     cbar = plt.colorbar()

@@ -6,7 +6,7 @@ import numpy as np
 import json
 import time
 import os
-
+import matplotlib
 import constants as const
 
 import sys
@@ -89,14 +89,17 @@ if __name__ == '__main__':
     for i in range(len(diagram)):
         diagram[i][0] = float('inf')
 
-    plt.imshow(diagram, origin='lower', extent=[0, 1, 0.4, 4], aspect='auto', interpolation='none')  # hamming
+    cmap = matplotlib.cm.viridis
+    cmap.set_bad(color='plum')
+
+    plt.imshow(diagram, origin='lower', extent=[0, 1, 0.4, 4], aspect='auto', cmap=cmap)  # hamming
 
     plt.axvline(0.03, color='black')
     plt.axhline(2.2, xmin=0.03, xmax=0.48, color='black', linestyle='--')
     plt.plot(qs_list, qs_ds_list, color='black', linestyle='--')
 
     ax = plt.gca()
-    ax.set_facecolor('plum')  # plum
+    # ax.set_facecolor('plum')  # plum
     plt.xlabel(r'$q$')
     plt.ylabel(r'$\Delta S (= \Delta T)$')
     cbar = plt.colorbar()
