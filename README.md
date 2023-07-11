@@ -1,5 +1,5 @@
 # Coordination Game Simulations
-Scripts for running simulations in evolutionary game theory, built for coordination games, but any payoff matrix can be specified. Playaers can be placed on a sinlge or a multi-layer network. Different strategy updates are possible - the best response, the unconditional imitation, or the replicaor dynamics.
+Scripts for running simulations in evolutionary game theory, built for coordination games, but any payoff matrix can be specified. Players can be placed on a sinlge or a multi-layer network. Different strategy updates are possible - the best response, the unconditional imitation, or the replicaor dynamics.
 
 See published results:
 
